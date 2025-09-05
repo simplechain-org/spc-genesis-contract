@@ -28,9 +28,29 @@
     "shanghaiTime": 0,
     "keplerTime": 0,
     "feynmanTime": 0,
+    "feynmanFixTime": 0,
+    "cancunTime": 0,
+    "haberTime": 0,
+    "haberFixTime": 0,
+    "bohrTime": 0,
+    "pascalTime": 0,
+    "pragueTime": 0,
+    "lorentzTime": 0,
+    "depositContractAddress": "0x0000000000000000000000000000000000000000",
     "parlia": {
-      "period": 3,
-      "epoch": 200
+      "slash": false
+    },
+    "blobSchedule": {
+      "cancun": {
+        "target": 3,
+        "max": 6,
+        "baseFeeUpdateFraction": 3338477
+      },
+      "prague": {
+        "target": 3,
+        "max": 6,
+        "baseFeeUpdateFraction": 3338477
+      }
     }
   },
   "nonce": "0x0",

@@ -60,7 +60,7 @@ contract BSCValidatorSet is IBSCValidatorSet, System, IParamSubscriber, IApplica
     uint256 public constant MAX_SYSTEM_REWARD_BALANCE = 100 ether;
 
     // Mercury upgrade
-    uint256 public blockAward = 1500000000000000000; // 1.5 ether in wei
+    uint256 public BLOCK_AWARD = 1500000000000000000; // 1.5 ether in wei
 
     uint256 public systemRewardBaseRatio;
     uint256 public previousHeight;
@@ -678,10 +678,6 @@ contract BSCValidatorSet is IBSCValidatorSet, System, IParamSubscriber, IApplica
                 "the turnLength should be in [3,64] or equal to 1"
             );
             turnLength = newTurnLength;
-        } else if (Memory.compareStrings(key, "blockAward")) {
-            require(value.length == 32, "length of blockAward mismatch");
-            uint256 newBlockAward = BytesToTypes.bytesToUint256(32, value);
-            blockAward = newBlockAward;
         } else {
             require(false, "unknown param");
         }

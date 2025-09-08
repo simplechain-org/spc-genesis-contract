@@ -629,7 +629,7 @@
   },
   {
     "type": "function",
-    "name": "blockAward",
+    "name": "BLOCK_AWARD",
     "inputs": [],
     "outputs": [
       {

@@ -60,7 +60,7 @@ contract BSCValidatorSet is IBSCValidatorSet, System, IParamSubscriber, IApplica
     uint256 public constant MAX_SYSTEM_REWARD_BALANCE = 100 ether;
 
     // Mercury upgrade
-    uint256 public const BLOCK_AWARD = 1500000000000000000; // 1.5 ether in wei
+    uint256 public constant BLOCK_AWARD = 1500000000000000000; // 1.5 ether in wei
 
     uint256 public systemRewardBaseRatio;
     uint256 public previousHeight;

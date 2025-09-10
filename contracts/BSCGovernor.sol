@@ -37,11 +37,11 @@ contract BSCGovernor is
     uint256 private constant BLOCK_INTERVAL = 3 seconds; // TODO(Nathan): Only can be used to do initialize!
     uint256 private constant INIT_VOTING_DELAY = 0 hours / BLOCK_INTERVAL;
     uint256 private constant INIT_VOTING_PERIOD = 7 days / BLOCK_INTERVAL;
-    uint256 private constant INIT_PROPOSAL_THRESHOLD = 200 ether; //  = 200 BNB
+    uint256 private constant INIT_PROPOSAL_THRESHOLD = 5000 ether; //  = 5000 SRW
     uint256 private constant INIT_QUORUM_NUMERATOR = 10; // for >= 10%
 
-    // starting propose requires totalSupply of GovBNB >= 10000000 * 1e18
-    uint256 private constant PROPOSE_START_GOVBNB_SUPPLY_THRESHOLD = 10_000_000 ether;
+    // starting propose requires totalSupply of GovBNB >= 250000000 * 1e18
+    uint256 private constant PROPOSE_START_GOVBNB_SUPPLY_THRESHOLD = 250_000_000 ether;
     // ensures there is a minimum voting period (1 days) after quorum is reached
     uint64 private constant INIT_MIN_PERIOD_AFTER_QUORUM = uint64(1 days / BLOCK_INTERVAL);
 
@@ -182,7 +182,7 @@ contract BSCGovernor is
         } else if (key.compareStrings("proposalThreshold")) {
             if (value.length != 32) revert InvalidValue(key, value);
             uint256 newProposalThreshold = value.bytesToUint256(32);
-            if (newProposalThreshold == 0 || newProposalThreshold > 10_000 ether) revert InvalidValue(key, value);
+            if (newProposalThreshold == 0 || newProposalThreshold > 250_000 ether) revert InvalidValue(key, value);
             _setProposalThreshold(newProposalThreshold);
         } else if (key.compareStrings("quorumNumerator")) {
             if (value.length != 32) revert InvalidValue(key, value);

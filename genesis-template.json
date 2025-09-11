@@ -111,8 +111,7 @@
     "0x0000000000000000000000000000000000003000": {
       "balance": "0x0",
       "code": "{{tokenRecoverPortal}}"
-    }
-    {% for v in initHolders %},
+    }{% for v in initHolders %},
     "{{ v.address.replace('0x', '') }}": {
       "balance": "0x{{ v.balance }}"
     }{% endfor %}

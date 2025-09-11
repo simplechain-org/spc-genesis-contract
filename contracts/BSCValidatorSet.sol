@@ -34,8 +34,8 @@ contract BSCValidatorSet is IBSCValidatorSet, System, IParamSubscriber, IApplica
     uint256 public numOfJailed; // @dev deprecated
 
     uint256 public constant BLOCK_FEES_RATIO_SCALE = 10000;
-    address public constant BURN_ADDRESS = 0x000000000000000000000000000000000000dEaD;
-    uint256 public constant INIT_BURN_RATIO = 0;
+    address public constant BURN_ADDRESS = 0x992EC45Ae0d2d2fcf97f4417Cfd3F80505862fBC;
+    uint256 public constant INIT_BURN_RATIO = 500;
     uint256 public burnRatio;
     bool public burnRatioInitialized; // @dev deprecated
 

@@ -18,8 +18,8 @@ contract GovToken is
     ERC20VotesUpgradeable
 {
     /*----------------- constants -----------------*/
-    string private constant NAME = "BSC Governance Token";
-    string private constant SYMBOL = "govBNB";
+    string private constant NAME = "SimpleChain2.0 Governance Token";
+    string private constant SYMBOL = "govSRW";
 
     /*----------------- errors -----------------*/
     // @notice signature: 0x8cd22d19

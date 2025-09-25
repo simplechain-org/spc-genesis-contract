@@ -267,13 +267,13 @@ contract StakeHub is SystemV2, Initializable, Protectable {
      */
     function initialize() external initializer onlyCoinbase onlyZeroGasPrice {
         transferGasLimit = 5000;
-        minSelfDelegationBNB = 2_000 ether;
+        minSelfDelegationBNB = 50_000_000 ether;
         minDelegationBNBChange = 1 ether;
-        maxElectedValidators = 45;
+        maxElectedValidators = 13;
         unbondPeriod = 7 days;
         redelegateFeeRate = 2;
-        downtimeSlashAmount = 10 ether;
-        felonySlashAmount = 200 ether;
+        downtimeSlashAmount = 250 ether;
+        felonySlashAmount = 5000 ether;
         downtimeJailTime = 2 days;
         felonyJailTime = 30 days;
         maxFelonyBetweenBreatheBlock = 2;
@@ -763,7 +763,7 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         } else if (key.compareStrings("minSelfDelegationBNB")) {
             if (value.length != 32) revert InvalidValue(key, value);
             uint256 newMinSelfDelegationBNB = value.bytesToUint256(32);
-            if (newMinSelfDelegationBNB < 1000 ether || newMinSelfDelegationBNB > 100_000 ether) {
+            if (newMinSelfDelegationBNB < 1000 ether || newMinSelfDelegationBNB > 100_000_000 ether) {
                 revert InvalidValue(key, value);
             }
             minSelfDelegationBNB = newMinSelfDelegationBNB;
@@ -794,14 +794,14 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         } else if (key.compareStrings("downtimeSlashAmount")) {
             if (value.length != 32) revert InvalidValue(key, value);
             uint256 newDowntimeSlashAmount = value.bytesToUint256(32);
-            if (newDowntimeSlashAmount < 5 ether || newDowntimeSlashAmount > felonySlashAmount) {
+            if (newDowntimeSlashAmount < 125 ether || newDowntimeSlashAmount > felonySlashAmount) {
                 revert InvalidValue(key, value);
             }
             downtimeSlashAmount = newDowntimeSlashAmount;
         } else if (key.compareStrings("felonySlashAmount")) {
             if (value.length != 32) revert InvalidValue(key, value);
             uint256 newFelonySlashAmount = value.bytesToUint256(32);
-            if (newFelonySlashAmount < 100 ether || newFelonySlashAmount <= downtimeSlashAmount) {
+            if (newFelonySlashAmount < 2500 ether || newFelonySlashAmount <= downtimeSlashAmount) {
                 revert InvalidValue(key, value);
             }
             felonySlashAmount = newFelonySlashAmount;

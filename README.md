@@ -1,6 +1,6 @@
-# bsc-genesis-contracts
+# SimpleChain2.0-genesis-contracts
 
-This repo hold all the genesis contracts on BNB Smart chain. More details in [doc-site](https://docs.bnbchain.org/docs/learn/system-contract).
+This repo hold all the genesis contracts on SimpleChain2.0. More details in [doc-site](https://docs.bnbchain.org/docs/learn/system-contract).
 
 ## Prepare
 
@@ -13,7 +13,7 @@ Install foundry:
 ```shell script
 curl -L https://foundry.paradigm.xyz | bash
 foundryup
-forge install --no-git --no-commit foundry-rs/forge-std@v1.7.3
+forge install --no-git foundry-rs/forge-std@v1.7.3
 ```
 
 Install poetry:

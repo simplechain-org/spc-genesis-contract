@@ -6,7 +6,7 @@ import "./interface/0.6.x/IParamSubscriber.sol";
 import "./interface/0.6.x/ISystemReward.sol";
 
 contract SystemReward is System, IParamSubscriber, ISystemReward {
-    uint256 public constant MAX_REWARDS = 5e18;
+    uint256 public constant MAX_REWARDS = 125e18;
 
     uint256 public numOperator;
     mapping(address => bool) operators;

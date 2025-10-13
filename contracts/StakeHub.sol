@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./SystemV2.sol";
 import "./extension/Protectable.sol";
-import "./interface/0.8.x/IBSCValidatorSet.sol";
+import "./interface/0.8.x/ISPCValidatorSet.sol";
 import "./interface/0.8.x/IGovToken.sol";
 import "./interface/0.8.x/IStakeCredit.sol";
 import "./lib/0.8.x/Utils.sol";
@@ -263,7 +263,7 @@ contract StakeHub is SystemV2, Initializable, Protectable {
     }
 
     /**
-     * @dev this function is invoked by BSC Parlia consensus engine during the hard fork
+     * @dev this function is invoked by SPC Parlia consensus engine during the hard fork
      */
     function initialize() external initializer onlyCoinbase onlyZeroGasPrice {
         transferGasLimit = 5000;
@@ -1230,7 +1230,7 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         }
         if (IStakeCredit(valInfo.creditContract).getPooledBNB(operatorAddress) < minSelfDelegationBNB) {
             _jailValidator(valInfo, block.timestamp + downtimeJailTime);
-            IBSCValidatorSet(VALIDATOR_CONTRACT_ADDR).felony(valInfo.consensusAddress);
+            ISPCValidatorSet(VALIDATOR_CONTRACT_ADDR).felony(valInfo.consensusAddress);
         }
     }
 

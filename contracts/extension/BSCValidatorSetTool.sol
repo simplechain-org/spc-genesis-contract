@@ -3,7 +3,7 @@ pragma solidity 0.6.4;
 import "../lib/0.6.x/RLPDecode.sol";
 import "../lib/0.6.x/Memory.sol";
 
-contract BSCValidatorSetTool {
+contract SPCValidatorSetTool {
     bytes public constant INIT_VALIDATORSET_BYTES =
         hex"f84580f842f840949fb29aac15b9a4b7f17c3385939b007540f4d791949fb29aac15b9a4b7f17c3385939b007540f4d791949fb29aac15b9a4b7f17c3385939b007540f4d79164";
 

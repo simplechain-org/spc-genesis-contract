@@ -133,7 +133,7 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
 
     /**
      * @dev handle ack cross-chain package from BC，it means cross-chain transfer successfully to BC
-     * and will refund the remaining token caused by different decimals between BSC and BC.
+     * and will refund the remaining token caused by different decimals between SPC and BC.
      *
      * @param channelId The channel for cross-chain communication
      * @param msgBytes The rlp encoded message bytes sent from BC
@@ -192,10 +192,10 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
     }
 
     /**
-     * @dev request a BC token recover from BSC
+     * @dev request a BC token recover from SPC
      *
-     * @param tokenSymbol The token symbol on BSC.
-     * @param recipient The destination address of the transfer on BSC.
+     * @param tokenSymbol The token symbol on SPC.
+     * @param recipient The destination address of the transfer on SPC.
      * @param amount The amount to transfer
      */
     function recoverBCAsset(
@@ -219,7 +219,7 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
             require(IBEP20(contractAddr).balanceOf(address(this)) >= convertedAmount, "insufficient balance");
             _lockRecoverToken(tokenSymbol, contractAddr, convertedAmount, recipient);
         } else {
-            convertedAmount = amount.mul(TEN_DECIMALS); // native bnb decimals is 8 on BC, while the native bnb decimals on BSC is 18
+            convertedAmount = amount.mul(TEN_DECIMALS); // native bnb decimals is 8 on BC, while the native bnb decimals on SPC is 18
             require(address(this).balance >= convertedAmount, "insufficient balance");
             address contractAddr = address(0x00);
             _lockRecoverToken(tokenSymbol, contractAddr, convertedAmount, recipient);
@@ -251,7 +251,7 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
     }
 
     /**
-     * @dev request a cross-chain transfer from BSC to BC
+     * @dev request a cross-chain transfer from SPC to BC
      * @notice this function is deprecated after Feynman upgrade
      *
      * @param contractAddr The token contract which is transferred
@@ -269,7 +269,7 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
     }
 
     /**
-     * @dev request a batch cross-chain BNB transfers from BSC to BC
+     * @dev request a batch cross-chain BNB transfers from SPC to BC
      *
      * @param recipientAddrs The destination address of the cross-chain transfer on BC.
      * @param amounts The amounts to transfer

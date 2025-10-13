@@ -9,7 +9,7 @@ import "../System.sol";
 contract TokenManager is System, IApplication, IParamSubscriber {
     using SafeMath for uint256;
 
-    // BC to BSC
+    // BC to SPC
     struct BindSynPackage {
         uint8 packageType;
         bytes32 bep2TokenSymbol;

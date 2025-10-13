@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/governance/TimelockControllerUpgrade
 import "./SystemV2.sol";
 import "./lib/0.8.x/Utils.sol";
 
-contract BSCTimelock is SystemV2, Initializable, TimelockControllerUpgradeable {
+contract SPCTimelock is SystemV2, Initializable, TimelockControllerUpgradeable {
     using Utils for bytes;
     using Utils for string;
 

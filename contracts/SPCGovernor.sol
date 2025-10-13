@@ -14,7 +14,7 @@ import "./extension/Protectable.sol";
 import "./lib/0.8.x/Utils.sol";
 import "./interface/0.8.x/IGovToken.sol";
 
-contract BSCGovernor is
+contract SPCGovernor is
     SystemV2,
     Initializable,
     Protectable,
@@ -64,7 +64,7 @@ contract BSCGovernor is
 
     /*----------------- init -----------------*/
     function initialize() external initializer onlyCoinbase onlyZeroGasPrice {
-        __Governor_init("BSCGovernor");
+        __Governor_init("SPCGovernor");
         __GovernorSettings_init(INIT_VOTING_DELAY, INIT_VOTING_PERIOD, INIT_PROPOSAL_THRESHOLD);
         __GovernorCompatibilityBravo_init();
         __GovernorVotes_init(IVotesUpgradeable(GOV_TOKEN_ADDR));
@@ -72,7 +72,7 @@ contract BSCGovernor is
         __GovernorVotesQuorumFraction_init(INIT_QUORUM_NUMERATOR);
         __GovernorPreventLateQuorum_init(INIT_MIN_PERIOD_AFTER_QUORUM);
 
-        // BSCGovernor => Timelock => GovHub => system contracts
+        // SPCGovernor => Timelock => GovHub => system contracts
         whitelistTargets[GOV_HUB_ADDR] = true;
 
         // Different address will be set depending on the environment

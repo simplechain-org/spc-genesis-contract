@@ -2,7 +2,7 @@ pragma solidity 0.6.4;
 
 import "../interface/0.6.x/ICrossChain.sol";
 import "../interface/0.6.x/ILightClient.sol";
-import "../interface/0.6.x/IBSCValidatorSetV2.sol";
+import "../interface/0.6.x/ISPCValidatorSetV2.sol";
 import "../lib/0.6.x/Memory.sol";
 import "../interface/0.6.x/IParamSubscriber.sol";
 import "../System.sol";
@@ -109,8 +109,8 @@ contract CrossChain is System, ICrossChain, IParamSubscriber {
 
     // BEP-171: Security Enhancement for Cross-Chain Module
     modifier onlyCabinet() {
-        uint256 indexPlus = IBSCValidatorSetV2(VALIDATOR_CONTRACT_ADDR).currentValidatorSetMap(msg.sender);
-        uint256 numOfCabinets = IBSCValidatorSetV2(VALIDATOR_CONTRACT_ADDR).numOfCabinets();
+        uint256 indexPlus = ISPCValidatorSetV2(VALIDATOR_CONTRACT_ADDR).currentValidatorSetMap(msg.sender);
+        uint256 numOfCabinets = ISPCValidatorSetV2(VALIDATOR_CONTRACT_ADDR).numOfCabinets();
         if (numOfCabinets == 0) {
             numOfCabinets = 21;
         }

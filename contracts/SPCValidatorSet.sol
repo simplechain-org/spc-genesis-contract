@@ -77,6 +77,28 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     uint256 public turnLength; // Consecutive number of blocks a validator receives priority for block production
     uint256 public systemRewardAntiMEVRatio;
 
+    // Copper upgrade
+    uint256 public constant INIT_NOMINAL_INTEREST_RATE = 200;
+    uint256 public constant INIT_TOKEN_ISSUANCE_AMOUNT = 50000000000 ether;
+    uint256 public constant INIT_INFLATION_RATE = 500;
+    uint256 public constant INIT_ISSUE_YEAR = 2025;
+    bool public isCopper;
+//    uint256 public additionalTokenIssuanceAmount;
+//    uint256 public annualIssuanceAmountOfBasicReward;
+//    uint256 public annualIssuanceAmountOfContributionReward;
+    uint256 public inflationRate;
+
+    uint256 public currentTotalIssuedSupply;
+    uint256 public currentTotalBurnedSupply;
+    uint256 public nominalInterestRate;
+
+    mapping(address => mapping(uint256 => uint256)) public validatorInTurnRecord;
+    mapping(address => mapping(uint256 => uint256)) public validatorOutTurnRecord;
+
+    // year => inflationInfo
+    mapping(uint256 => InflationInfo ) public inflationRecord;
+    address[] public burnedAddressList;
+
     struct Validator {
         address consensusAddress;
         address payable feeAddress;
@@ -101,6 +123,12 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
         uint8 packageType;
         Validator[] validatorSet;
         bytes[] voteAddrs;
+    }
+
+    struct InflationInfo {
+        uint256 totalSupply;
+        uint256 additionalTokenIssuanceAmount;
+        uint256 inflationRate;
     }
 
     /*----------------- modifiers -----------------*/
@@ -141,6 +169,8 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     event validatorExitMaintenance(address indexed validator);
     event finalityRewardDeposit(address indexed validator, uint256 amount);
     event deprecatedFinalityRewardDeposit(address indexed validator, uint256 amount);
+
+    event burnedAddressUpdated(address indexed addr, bool isAdded);
 
     event validatorJailed(address indexed validator);  // @dev deprecated
     event validatorEmptyJailed(address indexed validator);  // @dev deprecated
@@ -253,6 +283,19 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
             isSystemRewardIncluded = true;
         }
 
+        if (isCopper == false) {
+            nominalInterestRate = INIT_NOMINAL_INTEREST_RATE;
+            currentTotalIssuedSupply = INIT_TOKEN_ISSUANCE_AMOUNT;
+            inflationRate = INIT_INFLATION_RATE;
+            inflationRecord[INIT_ISSUE_YEAR].additionalTokenIssuanceAmount = 0;
+            inflationRecord[INIT_ISSUE_YEAR].totalSupply = INIT_TOKEN_ISSUANCE_AMOUNT;
+            inflationRecord[INIT_ISSUE_YEAR].inflationRate = INIT_INFLATION_RATE;
+            // Initialize burned address list with zero address and dead address
+            burnedAddressList.push(address(0x0000000000000000000000000000000000000000));
+            burnedAddressList.push(address(0x000000000000000000000000000000000000dEaD));
+            isCopper = true;
+        }
+
         uint256 systemRewardRatio = systemRewardBaseRatio;
         if (turnLength > 1 && systemRewardAntiMEVRatio > 0) {
             systemRewardRatio += systemRewardAntiMEVRatio * (block.number % turnLength) / (turnLength - 1);
@@ -343,7 +386,46 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
             }
         }
     }
+    /**
+     * @dev update validator uptime records
+     *
+     * @param valAddr The validator address who produced the current block
+     * @param inTurnValAddr The validator address who should produce the current block
+     */
+    function updateValidatorUptimeRecord(address valAddr, address inTurnValAddr) external onlyCoinbase onlyInit onlyZeroGasPrice {
+        uint256 index = block.timestamp / IStakeHub(STAKE_HUB_ADDR).BREATHE_BLOCK_INTERVAL();
+        if (inTurnValAddr != valAddr) {
+            validatorOutTurnRecord[index][inTurnValAddr] += 1;
+        } else {
+            validatorInTurnRecord[index][inTurnValAddr] += 1;
+        }
+    }
 
+    /**
+    * @dev update current total supply
+     *
+     * @param additionalAmount The additional amount of the block
+     * @param burnedAmount The total burned amount
+     */
+    function updateCurrentTotalSupply(uint256 additionalAmount,uint256 burnedAmount) external onlyCoinbase onlyInit onlyZeroGasPrice {
+        currentTotalIssuedSupply += additionalAmount;
+        currentTotalBurnedSupply = burnedAmount;
+    }
+
+    /**
+     * @dev update inflation record
+     *
+     * @param year The year of the inflation record
+     * @param additionalAmount The additional amount of the year
+     * @param totalSupply The total supply of the year
+     * @param inflationRate The inflation rate of the year
+     */
+    function updateInflationRecord(uint256 year, uint256 additionalAmount, uint256 totalSupply, uint256 inflationRate) external onlyCoinbase onlyInit onlyZeroGasPrice {
+        inflationRecord[year].additionalTokenIssuanceAmount = additionalAmount;
+        inflationRecord[year].totalSupply = totalSupply;
+        inflationRecord[year].inflationRate = inflationRate;
+        inflationRate = inflationRate;
+    }
     /*----------------- View Functions -----------------*/
     /**
      * @notice Return the vote address and consensus address of the validators in `currentValidatorSet` that are not jailed
@@ -520,6 +602,41 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
         }
     }
 
+    /**
+     * @notice Return the uptime record of the validator at index.
+     */
+    function getValidatorUptimeRecord(address val,uint256 index) public view returns (uint256 inturnCounts, uint256 outturnCounts) {
+        inturnCounts = validatorInTurnRecord[val][index];
+        outturnCounts = validatorOutTurnRecord[val][index];
+    }
+
+    /**
+     * @notice Return the current total issued supply and burned supply.
+     */
+    function getTotalSupply() public view returns (uint256 totalIssued, uint256 totalBurned) {
+        totalIssued = currentTotalIssuedSupply;
+        totalBurned = currentTotalBurnedSupply;
+    }
+
+    /**
+     * @notice Return the list of burned addresses.
+     */
+    function getBurnedAddressList() public view returns (address[] memory) {
+        return burnedAddressList;
+    }
+
+    /**
+     * @notice Check if an address is in the burned address list.
+     */
+    function isBurnedAddress(address addr) public view returns (bool) {
+        for (uint256 i; i < burnedAddressList.length; ++i) {
+            if (burnedAddressList[i] == addr) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /*----------------- For slash -----------------*/
     function misdemeanor(address validator) external override onlySlash initValidatorExtraSet {
         uint256 validatorIndex = _misdemeanor(validator);
@@ -678,6 +795,55 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
                 "the turnLength should be in [3,64] or equal to 1"
             );
             turnLength = newTurnLength;
+        } else if (Memory.compareStrings(key, "nominalInterestRate")) {
+            require(value.length == 32, "length of nominalInterestRate mismatch");
+            uint256 newNominalInterestRate = BytesToTypes.bytesToUint256(32, value);
+            require(
+                newNominalInterestRate > 0 && newNominalInterestRate < BLOCK_FEES_RATIO_SCALE,
+                "the nominalInterestRate must be greater than 0 and less than 10000"
+            );
+            nominalInterestRate = newNominalInterestRate;
+        } else if (Memory.compareStrings(key, "inflationRate")) {
+            require(value.length == 32, "length of inflationRate mismatch");
+            uint256 newInflationRate = BytesToTypes.bytesToUint256(32, value);
+            require(
+                newInflationRate > 0 && newInflationRate < BLOCK_FEES_RATIO_SCALE,
+            "the inflationRate must be greater than 0 and less than 10000"
+            );
+            inflationRate = newInflationRate;
+        } else if (Memory.compareStrings(key, "addBurnedAddress")) {
+            require(value.length == 20, "length of address mismatch");
+            address newBurnedAddress = BytesToTypes.bytesToAddress(20, value);
+            // Check if address already exists
+            bool exists = false;
+            for (uint256 i; i < burnedAddressList.length; ++i) {
+                if (burnedAddressList[i] == newBurnedAddress) {
+                    exists = true;
+                    break;
+                }
+            }
+            require(!exists, "address already in burned list");
+            burnedAddressList.push(newBurnedAddress);
+            emit burnedAddressUpdated(newBurnedAddress, true);
+        } else if (Memory.compareStrings(key, "removeBurnedAddress")) {
+            require(value.length == 20, "length of address mismatch");
+            address removeBurnedAddress = BytesToTypes.bytesToAddress(20, value);
+            bool found = false;
+            uint256 indexToRemove;
+            for (uint256 i; i < burnedAddressList.length; ++i) {
+                if (burnedAddressList[i] == removeBurnedAddress) {
+                    found = true;
+                    indexToRemove = i;
+                    break;
+                }
+            }
+            require(found, "address not in burned list");
+            // Remove the address by moving the last element to the position and pop
+            if (indexToRemove != burnedAddressList.length - 1) {
+                burnedAddressList[indexToRemove] = burnedAddressList[burnedAddressList.length - 1];
+            }
+            burnedAddressList.pop();
+            emit burnedAddressUpdated(removeBurnedAddress, false);
         } else {
             require(false, "unknown param");
         }

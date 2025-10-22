@@ -859,6 +859,16 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         return IStakeCredit(_validators[operatorAddress].creditContract).totalPooledBNBRecord(index);
     }
 
+    function getValidatorTotalPooled(address operatorAddress) external view returns (uint256) {
+        if (!_validatorSet.contains(operatorAddress)) revert ValidatorNotExisted();
+        return IStakeCredit(_validators[operatorAddress].creditContract).totalPooledBNB();
+    }
+
+    function getValidatorSelfDelegated(address operatorAddress) external view returns (uint256) {
+        if (!_validatorSet.contains(operatorAddress)) revert ValidatorNotExisted();
+        return IStakeCredit(_validators[operatorAddress].creditContract).getPooledBNB(operatorAddress);
+    }
+
     /**
      * @notice pagination query all validators' operator address and credit contract address
      *
@@ -885,6 +895,15 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         for (uint256 i; i < count; ++i) {
             operatorAddrs[i] = _validatorSet.at(offset + i);
             creditAddrs[i] = _validators[operatorAddrs[i]].creditContract;
+        }
+    }
+
+    function getValidatorsTotalPooled() external view returns (uint256 totalAmount) {
+        uint256 totalAmount;
+        for (uint256 i; i < _validatorSet.length(); ++i) {
+            address operatorAddr = _validatorSet.at(i);
+            address creditAddr = _validators[operatorAddr].creditContract;
+            totalAmount += IStakeCredit(creditAddr).totalPooledBNB();
         }
     }
 

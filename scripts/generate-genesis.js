@@ -43,7 +43,7 @@ function readByteCode(key, contractFile) {
 
 // compile files
 Promise.all([
-  readByteCode('validatorContract', 'out/BSCValidatorSet.sol/BSCValidatorSet.json'),
+  readByteCode('validatorContract', 'out/SPCValidatorSet.sol/SPCValidatorSet.json'),
   readByteCode('systemRewardContract', 'out/SystemReward.sol/SystemReward.json'),
   readByteCode('slashContract', 'out/SlashIndicator.sol/SlashIndicator.json'),
   readByteCode('tendermintLightClient', 'out/TendermintLightClient.sol/TendermintLightClient.json'),
@@ -56,9 +56,9 @@ Promise.all([
   readByteCode('staking', 'out/Staking.sol/Staking.json'),
   readByteCode('stakeHub', 'out/StakeHub.sol/StakeHub.json'),
   readByteCode('stakeCredit', 'out/StakeCredit.sol/StakeCredit.json'),
-  readByteCode('governor', 'out/BSCGovernor.sol/BSCGovernor.json'),
+  readByteCode('governor', 'out/SPCGovernor.sol/SPCGovernor.json'),
   readByteCode('govToken', 'out/GovToken.sol/GovToken.json'),
-  readByteCode('timelock', 'out/BSCTimelock.sol/BSCTimelock.json'),
+  readByteCode('timelock', 'out/SPCTimelock.sol/SPCTimelock.json'),
   readByteCode('tokenRecoverPortal', 'out/TokenRecoverPortal.sol/TokenRecoverPortal.json'),
 ]).then((result) => {
   const data = {

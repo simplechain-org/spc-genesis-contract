@@ -128,7 +128,7 @@ def generate_governor(
     block_interval, init_voting_delay, init_voting_period, init_proposal_threshold, init_quorum_numerator,
     propose_start_threshold, init_min_period_after_quorum, governor_protector
 ):
-    contract = "BSCGovernor.sol"
+    contract = "SPCGovernor.sol"
     backup_file(
         os.path.join(work_dir, "contracts", contract), os.path.join(work_dir, "contracts", contract[:-4] + ".bak")
     )
@@ -148,7 +148,7 @@ def generate_governor(
 
 
 def generate_timelock(init_minimal_delay):
-    contract = "BSCTimelock.sol"
+    contract = "SPCTimelock.sol"
     backup_file(
         os.path.join(work_dir, "contracts", contract), os.path.join(work_dir, "contracts", contract[:-4] + ".bak")
     )
@@ -202,7 +202,7 @@ def generate_token_recover_portal(source_chain_id, token_recover_portal_protecto
 
 
 def generate_validator_set(init_validator_set_bytes, init_burn_ratio):
-    contract = "BSCValidatorSet.sol"
+    contract = "SPCValidatorSet.sol"
     backup_file(
         os.path.join(work_dir, "contracts", contract), os.path.join(work_dir, "contracts", contract[:-4] + ".bak")
     )
@@ -304,7 +304,7 @@ def mainnet():
     print("Generate genesis of mainnet successfully")
 
 
-@main.command(help="Generate contracts for BSC testnet")
+@main.command(help="Generate contracts for SPC testnet")
 def testnet():
     global network, chain_id, hex_chain_id
     network = "testnet"
@@ -366,7 +366,7 @@ def dev(
     source_chain_id: Annotated[
         str, typer.Option(help="source chain id of the token recover portal")] = "Binance-Chain-Ganges",
     stake_hub_protector: Annotated[str, typer.Option(help="assetProtector of StakeHub")] = "address(0xdEaD)",
-    governor_protector: Annotated[str, typer.Option(help="governorProtector of BSCGovernor")] = "address(0xdEaD)",
+    governor_protector: Annotated[str, typer.Option(help="governorProtector of SPCGovernor")] = "address(0xdEaD)",
     token_recover_portal_protector: Annotated[str,
                                               typer.Option(help="protector of TokenRecoverPortal")] = "address(0xdEaD)",
     block_interval: Annotated[str, typer.Option(help="block interval of Parlia")] = "3 seconds",
@@ -379,16 +379,16 @@ def dev(
     misdemeanor_threshold: str = "50",
     felony_threshold: str = "150",
     init_voting_delay: Annotated[str,
-                                 typer.Option(help="INIT_VOTING_DELAY of BSCGovernor")] = "0 hours / BLOCK_INTERVAL",
+                                 typer.Option(help="INIT_VOTING_DELAY of SPCGovernor")] = "0 hours / BLOCK_INTERVAL",
     init_voting_period: Annotated[str,
-                                  typer.Option(help="INIT_VOTING_PERIOD of BSCGovernor")] = "7 days / BLOCK_INTERVAL",
-    init_proposal_threshold: Annotated[str, typer.Option(help="INIT_PROPOSAL_THRESHOLD of BSCGovernor")] = "200 ether",
-    init_quorum_numerator: Annotated[str, typer.Option(help="INIT_QUORUM_NUMERATOR of BSCGovernor")] = "10",
+                                  typer.Option(help="INIT_VOTING_PERIOD of SPCGovernor")] = "7 days / BLOCK_INTERVAL",
+    init_proposal_threshold: Annotated[str, typer.Option(help="INIT_PROPOSAL_THRESHOLD of SPCGovernor")] = "200 ether",
+    init_quorum_numerator: Annotated[str, typer.Option(help="INIT_QUORUM_NUMERATOR of SPCGovernor")] = "10",
     propose_start_threshold: Annotated[
-        str, typer.Option(help="PROPOSE_START_GOVBNB_SUPPLY_THRESHOLD of BSCGovernor")] = "10_000_000 ether",
+        str, typer.Option(help="PROPOSE_START_GOVBNB_SUPPLY_THRESHOLD of SPCGovernor")] = "10_000_000 ether",
     init_min_period_after_quorum: Annotated[
-        str, typer.Option(help="INIT_MIN_PERIOD_AFTER_QUORUM of BSCGovernor")] = "uint64(1 days / BLOCK_INTERVAL)",
-    init_minimal_delay: Annotated[str, typer.Option(help="INIT_MINIMAL_DELAY of BSCTimelock")] = "24 hours",
+        str, typer.Option(help="INIT_MIN_PERIOD_AFTER_QUORUM of SPCGovernor")] = "uint64(1 days / BLOCK_INTERVAL)",
+    init_minimal_delay: Annotated[str, typer.Option(help="INIT_MINIMAL_DELAY of SPCTimelock")] = "24 hours",
     lock_period_for_token_recover: Annotated[str,
                                              typer.Option(help="LOCK_PERIOD_FOR_TOKEN_RECOVER of TokenHub")] = "7 days",
 ):

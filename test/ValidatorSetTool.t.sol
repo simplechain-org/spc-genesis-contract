@@ -5,12 +5,12 @@ import "forge-std/Test.sol";
 import "./utils/interface/ISPCValidatorSetTool.sol";
 
 contract ToolTest is Test {
-    BSCValidatorSetTool public tool;
+    SPCValidatorSetTool public tool;
 
     function setUp() public {
         // deploy tool contract
         address toolAddr = deployCode("BSCValidatorSetTool.sol");
-        tool = BSCValidatorSetTool(toolAddr);
+        tool = SPCValidatorSetTool(toolAddr);
         vm.label(toolAddr, "BSCValidatorSetTool");
     }
 

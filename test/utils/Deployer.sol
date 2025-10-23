@@ -2,7 +2,7 @@ pragma solidity ^0.8.10;
 
 import "forge-std/Test.sol";
 
-import "./interface/IBSCValidatorSet.sol";
+import "./interface/ISPCValidatorSet.sol";
 import "./interface/ICrossChain.sol";
 import "./interface/IGovHub.sol";
 import "./interface/IRelayerHub.sol";
@@ -15,9 +15,9 @@ import "./interface/ITokenManager.sol";
 import "./interface/ITendermintLightClient.sol";
 import "./interface/IStakeHub.sol";
 import "./interface/IStakeCredit.sol";
-import "./interface/IBSCGovernor.sol";
+import "./interface/ISPCGovernor.sol";
 import "./interface/IGovToken.sol";
-import "./interface/IBSCTimelock.sol";
+import "./interface/ISPCTimelock.sol";
 import "./interface/ITokenRecoverPortal.sol";
 import "./RLPEncode.sol";
 import "./RLPDecode.sol";
@@ -55,7 +55,7 @@ contract Deployer is Test {
     uint8 public constant CROSS_STAKE_CHANNELID = 0x10;
     uint8 public constant BC_FUSION_CHANNELID = 0x11;
 
-    BSCValidatorSet public bscValidatorSet;
+    SPCValidatorSet public bscValidatorSet;
     SlashIndicator public slashIndicator;
     SystemReward public systemReward;
     TendermintLightClient public lightClient;
@@ -68,9 +68,9 @@ contract Deployer is Test {
     Staking public staking;
     StakeHub public stakeHub;
     StakeCredit public stakeCredit;
-    BSCGovernor public governor;
+    SPCGovernor public governor;
     GovToken public govToken;
-    BSCTimelock public timelock;
+    SPCTimelock public timelock;
     TokenRecoverPortal public tokenRecoverPortal;
 
     address payable public relayer;
@@ -85,7 +85,7 @@ contract Deployer is Test {
         assertEq(block.chainid, 56);
 
         // setup system contracts
-        bscValidatorSet = BSCValidatorSet(VALIDATOR_CONTRACT_ADDR);
+        bscValidatorSet = SPCValidatorSet(VALIDATOR_CONTRACT_ADDR);
         vm.label(address(bscValidatorSet), "Validator");
         slashIndicator = SlashIndicator(SLASH_CONTRACT_ADDR);
         vm.label(address(slashIndicator), "SlashIndicator");
@@ -111,17 +111,17 @@ contract Deployer is Test {
         vm.label(address(stakeHub), "StakeHub");
         stakeCredit = StakeCredit(STAKE_CREDIT_ADDR);
         vm.label(address(stakeCredit), "StakeCredit");
-        governor = BSCGovernor(GOVERNOR_ADDR);
-        vm.label(address(governor), "BSCGovernor");
+        governor = SPCGovernor(GOVERNOR_ADDR);
+        vm.label(address(governor), "SPCGovernor");
         govToken = GovToken(GOV_TOKEN_ADDR);
         vm.label(address(govToken), "GovToken");
-        timelock = BSCTimelock(TIMELOCK_ADDR);
-        vm.label(address(timelock), "BSCTimelock");
+        timelock = SPCTimelock(TIMELOCK_ADDR);
+        vm.label(address(timelock), "SPCTimelock");
         tokenRecoverPortal = TokenRecoverPortal(TOKEN_RECOVER_PORTAL_ADDR);
         vm.label(address(tokenRecoverPortal), "TokenRecoverPortal");
 
         // set the latest code
-        bytes memory deployedCode = vm.getDeployedCode("BSCValidatorSet.sol:BSCValidatorSet");
+        bytes memory deployedCode = vm.getDeployedCode("SPCValidatorSet.sol:SPCValidatorSet");
         vm.etch(VALIDATOR_CONTRACT_ADDR, deployedCode);
         deployedCode = vm.getDeployedCode("SlashIndicator.sol:SlashIndicator");
         vm.etch(SLASH_CONTRACT_ADDR, deployedCode);
@@ -147,11 +147,11 @@ contract Deployer is Test {
         vm.etch(STAKE_HUB_ADDR, deployedCode);
         deployedCode = vm.getDeployedCode("StakeCredit.sol:StakeCredit");
         vm.etch(STAKE_CREDIT_ADDR, deployedCode);
-        deployedCode = vm.getDeployedCode("BSCGovernor.sol:BSCGovernor");
+        deployedCode = vm.getDeployedCode("SPCGovernor.sol:SPCGovernor");
         vm.etch(GOVERNOR_ADDR, deployedCode);
         deployedCode = vm.getDeployedCode("GovToken.sol:GovToken");
         vm.etch(GOV_TOKEN_ADDR, deployedCode);
-        deployedCode = vm.getDeployedCode("BSCTimelock.sol:BSCTimelock");
+        deployedCode = vm.getDeployedCode("SPCTimelock.sol:SPCTimelock");
         vm.etch(TIMELOCK_ADDR, deployedCode);
         deployedCode = vm.getDeployedCode("TokenRecoverPortal.sol:TokenRecoverPortal");
         vm.etch(TOKEN_RECOVER_PORTAL_ADDR, deployedCode);

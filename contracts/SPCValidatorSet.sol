@@ -79,6 +79,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
 
     // Copper upgrade
     uint256 public constant INIT_NOMINAL_INTEREST_RATE = 200;
+    // todo: Make up for the rewards before the copper fork is enabled
     uint256 public constant INIT_TOKEN_ISSUANCE_AMOUNT = 50000000000 ether;
     uint256 public constant INIT_INFLATION_RATE = 500;
     uint256 public constant INIT_ISSUE_YEAR = 2025;
@@ -392,12 +393,11 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      * @param valAddr The validator address who produced the current block
      * @param inTurnValAddr The validator address who should produce the current block
      */
-    function updateValidatorUptimeRecord(address valAddr, address inTurnValAddr) external onlyCoinbase onlyInit onlyZeroGasPrice {
-        uint256 index = block.timestamp / IStakeHub(STAKE_HUB_ADDR).BREATHE_BLOCK_INTERVAL();
+    function updateValidatorUptimeRecord(uint256 index,address valAddr, address inTurnValAddr) external onlyCoinbase onlyInit onlyZeroGasPrice {
         if (inTurnValAddr != valAddr) {
-            validatorOutTurnRecord[index][inTurnValAddr] += 1;
+            validatorOutTurnRecord[inTurnValAddr][index] += 1;
         } else {
-            validatorInTurnRecord[index][inTurnValAddr] += 1;
+            validatorInTurnRecord[inTurnValAddr][index] += 1;
         }
     }
 
@@ -418,13 +418,13 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      * @param year The year of the inflation record
      * @param additionalAmount The additional amount of the year
      * @param totalSupply The total supply of the year
-     * @param inflationRate The inflation rate of the year
+     * @param newInflationRate The inflation rate of the year
      */
-    function updateInflationRecord(uint256 year, uint256 additionalAmount, uint256 totalSupply, uint256 inflationRate) external onlyCoinbase onlyInit onlyZeroGasPrice {
+    function updateInflationRecord(uint256 year, uint256 additionalAmount, uint256 totalSupply, uint256 newInflationRate) external onlyCoinbase onlyInit onlyZeroGasPrice {
         inflationRecord[year].additionalTokenIssuanceAmount = additionalAmount;
         inflationRecord[year].totalSupply = totalSupply;
-        inflationRecord[year].inflationRate = inflationRate;
-        inflationRate = inflationRate;
+        inflationRecord[year].inflationRate = newInflationRate;
+        inflationRate = newInflationRate;
     }
     /*----------------- View Functions -----------------*/
     /**

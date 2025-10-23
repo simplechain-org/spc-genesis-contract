@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
-interface BSCTimelock {
+interface SPCTimelock {
     error InvalidValue(string key, bytes value);
     error OnlyCoinbase();
     error OnlySystemContract(address systemContract);

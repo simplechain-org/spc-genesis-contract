@@ -899,7 +899,7 @@ contract StakeHub is SystemV2, Initializable, Protectable {
     }
 
     function getValidatorsTotalPooled() external view returns (uint256 totalAmount) {
-        uint256 totalAmount;
+        totalAmount = 0;
         for (uint256 i; i < _validatorSet.length(); ++i) {
             address operatorAddr = _validatorSet.at(i);
             address creditAddr = _validators[operatorAddr].creditContract;

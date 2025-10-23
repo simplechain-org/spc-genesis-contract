@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
-interface BSCValidatorSet {
+interface SPCValidatorSet {
     event batchTransfer(uint256 amount);
     event batchTransferFailed(uint256 indexed amount, string reason);
     event batchTransferLowerFailed(uint256 indexed amount, bytes reason);

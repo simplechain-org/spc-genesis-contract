@@ -83,6 +83,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     uint256 public constant INIT_TOKEN_ISSUANCE_AMOUNT = 50000000000 ether;
     uint256 public constant INIT_INFLATION_RATE = 500;
     uint256 public constant INIT_ISSUE_YEAR = 2025;
+    uint256 public constant INIT_MAX_CONTRIBUTION_REWARD_RATIO = 800;
     bool public isCopper;
 //    uint256 public additionalTokenIssuanceAmount;
 //    uint256 public annualIssuanceAmountOfBasicReward;
@@ -92,6 +93,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     uint256 public currentTotalIssuedSupply;
     uint256 public currentTotalBurnedSupply;
     uint256 public nominalInterestRate;
+    uint256 public maxContributionRewardRatio;
 
     mapping(address => mapping(uint256 => uint256)) public validatorInTurnRecord;
     mapping(address => mapping(uint256 => uint256)) public validatorOutTurnRecord;
@@ -288,6 +290,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
             nominalInterestRate = INIT_NOMINAL_INTEREST_RATE;
             currentTotalIssuedSupply = INIT_TOKEN_ISSUANCE_AMOUNT;
             inflationRate = INIT_INFLATION_RATE;
+            maxContributionRewardRatio = INIT_MAX_CONTRIBUTION_REWARD_RATIO;
             inflationRecord[INIT_ISSUE_YEAR].additionalTokenIssuanceAmount = 0;
             inflationRecord[INIT_ISSUE_YEAR].totalSupply = INIT_TOKEN_ISSUANCE_AMOUNT;
             inflationRecord[INIT_ISSUE_YEAR].inflationRate = INIT_INFLATION_RATE;
@@ -844,6 +847,14 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
             }
             burnedAddressList.pop();
             emit burnedAddressUpdated(removeBurnedAddress, false);
+        } else if (Memory.compareStrings(key, "maxContributionRewardRatio")) {
+            require(value.length == 32, "length of maxContributionRewardRatio mismatch");
+            uint256 newMaxContributionRewardRatio = BytesToTypes.bytesToUint256(32, value);
+            require(
+                newMaxContributionRewardRatio <= BLOCK_FEES_RATIO_SCALE,
+                "the maxContributionRewardRatio must be no greater than 10000"
+            );
+            maxContributionRewardRatio = newMaxContributionRewardRatio;
         } else {
             require(false, "unknown param");
         }

@@ -134,6 +134,8 @@ interface SPCValidatorSet {
         uint64[] memory _votingPowers,
         bytes[] memory _voteAddrs
     ) external;
+    function updateValidatorUptimeRecord(uint256 index, address valAddr, address inTurnValAddr) external;
+    function getValidatorUptimeRecord(address val, uint256 index) external view returns (uint256 inturnCounts, uint256 outturnCounts);
     function validatorExtraSet(uint256)
         external
         view

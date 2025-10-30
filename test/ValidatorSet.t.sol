@@ -28,6 +28,11 @@ contract ValidatorSetTest is Deployer {
     mapping(address => bool) public cabinets;
 
     function setUp() public {
+        // Initialize the validator set contract if not already initialized
+        if (!bscValidatorSet.alreadyInit()) {
+            bscValidatorSet.init();
+        }
+
         // add operator
         bytes memory key = "addOperator";
         bytes memory valueBytes = abi.encodePacked(address(bscValidatorSet));
@@ -48,7 +53,9 @@ contract ValidatorSetTest is Deployer {
         numOfCabinets = bscValidatorSet.numOfCabinets();
 
         address[] memory validators = bscValidatorSet.getValidators();
-        validator0 = validators[0];
+        if (validators.length > 0) {
+            validator0 = validators[0];
+        }
 
         coinbase = block.coinbase;
         vm.deal(coinbase, 100 ether);
@@ -61,6 +68,15 @@ contract ValidatorSetTest is Deployer {
     function testDeposit(uint256 amount) public {
         vm.assume(amount >= 1e16);
         vm.assume(amount <= 1e19);
+
+        // Create a validator if not exists
+        if (validator0 == address(0)) {
+            (, address[] memory consensusAddrs, uint64[] memory votingPowers, bytes[] memory voteAddrs) =
+                _batchCreateValidators(1);
+            vm.prank(coinbase);
+            bscValidatorSet.updateValidatorSetV2(consensusAddrs, votingPowers, voteAddrs);
+            validator0 = consensusAddrs[0];
+        }
 
         vm.expectRevert("the message sender must be the block producer");
         bscValidatorSet.deposit{ value: amount }(validator0);
@@ -295,6 +311,71 @@ contract ValidatorSetTest is Deployer {
         assertEq(address(systemReward).balance, ceil + cap);
 
         vm.stopPrank();
+    }
+
+    function testUpdateValidatorUptimeRecord() public {
+        // Create validators first
+        (, address[] memory consensusAddrs, uint64[] memory votingPowers, bytes[] memory voteAddrs) =
+            _batchCreateValidators(2);
+        
+        vm.startPrank(coinbase);
+        bscValidatorSet.updateValidatorSetV2(consensusAddrs, votingPowers, voteAddrs);
+        vm.stopPrank();
+
+        address validator1 = consensusAddrs[0];
+        address validator2 = consensusAddrs[1];
+        uint256 index = 1;
+
+        // Test failure case: non-coinbase caller
+        vm.expectRevert("the message sender must be the block producer");
+        bscValidatorSet.updateValidatorUptimeRecord(index, validator1, validator1);
+
+        // Test failure case: non-zero gas price
+        vm.txGasPrice(1);
+        vm.prank(coinbase);
+        vm.expectRevert("gasprice is not zero");
+        bscValidatorSet.updateValidatorUptimeRecord(index, validator1, validator1);
+        
+        // Reset gas price to zero
+        vm.txGasPrice(0);
+
+        // Test success case: in-turn validator (valAddr == inTurnValAddr)
+        vm.prank(coinbase);
+        bscValidatorSet.updateValidatorUptimeRecord(index, validator1, validator1);
+        
+        (uint256 inTurnCount, uint256 outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index);
+        assertEq(inTurnCount, 1, "in-turn count should be 1");
+        assertEq(outTurnCount, 0, "out-turn count should be 0");
+
+        // Test success case: out-of-turn validator (valAddr != inTurnValAddr)
+        vm.prank(coinbase);
+        bscValidatorSet.updateValidatorUptimeRecord(index, validator2, validator1);
+        
+        (inTurnCount, outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index);
+        assertEq(inTurnCount, 1, "in-turn count should still be 1");
+        assertEq(outTurnCount, 1, "out-turn count should be 1");
+
+        // Test multiple updates for same validator
+        vm.prank(coinbase);
+        bscValidatorSet.updateValidatorUptimeRecord(index, validator1, validator1);
+        
+        (inTurnCount, outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index);
+        assertEq(inTurnCount, 2, "in-turn count should be 2");
+        assertEq(outTurnCount, 1, "out-turn count should still be 1");
+
+        // Test different index for same validator
+        uint256 index2 = 2;
+        vm.prank(coinbase);
+        bscValidatorSet.updateValidatorUptimeRecord(index2, validator1, validator1);
+        
+        (inTurnCount, outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index2);
+        assertEq(inTurnCount, 1, "in-turn count for index2 should be 1");
+        assertEq(outTurnCount, 0, "out-turn count for index2 should be 0");
+        
+        // Verify original index is unchanged
+        (inTurnCount, outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index);
+        assertEq(inTurnCount, 2, "in-turn count for original index should still be 2");
+        assertEq(outTurnCount, 1, "out-turn count for original index should still be 1");
     }
 
     function _calcIncoming(uint256 value) internal view returns (uint256 incoming) {

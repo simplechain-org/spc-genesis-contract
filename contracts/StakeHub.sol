@@ -858,15 +858,27 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         if (!_validatorSet.contains(operatorAddress)) revert ValidatorNotExisted();
         return IStakeCredit(_validators[operatorAddress].creditContract).totalPooledBNBRecord(index);
     }
-
-    function getValidatorTotalPooled(address operatorAddress) external view returns (uint256) {
+    /**
+    * @notice Get shares and pooled BNB of other delegators
+    */
+    function getValidatorDelegatedInfo(address operatorAddress) 
+        external 
+        view 
+        returns (uint256 totalPooled, uint256 selfDelegated,uint256 otherDelegated) 
+    {
         if (!_validatorSet.contains(operatorAddress)) revert ValidatorNotExisted();
-        return IStakeCredit(_validators[operatorAddress].creditContract).totalPooledBNB();
-    }
-
-    function getValidatorSelfDelegated(address operatorAddress) external view returns (uint256) {
-        if (!_validatorSet.contains(operatorAddress)) revert ValidatorNotExisted();
-        return IStakeCredit(_validators[operatorAddress].creditContract).getPooledBNB(operatorAddress);
+        
+        IStakeCredit creditContract = IStakeCredit(_validators[operatorAddress].creditContract);
+        
+        uint256 totalShares = creditContract.totalSupply();
+        uint256 deadShares = creditContract.balanceOf(DEAD_ADDRESS);
+        uint256 validatorShares = creditContract.balanceOf(operatorAddress);
+        
+        uint256 otherShares = totalShares - deadShares - validatorShares;
+        
+        totalPooled = creditContract.getPooledBNBByShares(totalShares);
+        selfDelegated = creditContract.getPooledBNBByShares(validatorShares);
+        otherDelegated = creditContract.getPooledBNBByShares(otherShares);
     }
 
     /**
@@ -898,13 +910,14 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         }
     }
 
-    function getValidatorsTotalPooled() external view returns (uint256 totalAmount) {
-        totalAmount = 0;
+    function getValidatorsTotalPooled() external view returns (uint256) {
+        uint256 totalAmount = 0;
         for (uint256 i; i < _validatorSet.length(); ++i) {
             address operatorAddr = _validatorSet.at(i);
             address creditAddr = _validators[operatorAddr].creditContract;
             totalAmount += IStakeCredit(creditAddr).totalPooledBNB();
         }
+        return totalAmount;
     }
 
     /**

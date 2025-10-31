@@ -80,14 +80,13 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     // Copper upgrade
     uint256 public constant INIT_NOMINAL_INTEREST_RATE = 200;
     // todo: Make up for the rewards before the copper fork is enabled
-    uint256 public constant INIT_TOKEN_ISSUANCE_AMOUNT = 50000000000 ether;
+    uint256 public constant INIT_TOKEN_ISSUANCE_AMOUNT = 5000000000 ether;
     uint256 public constant INIT_INFLATION_RATE = 500;
     uint256 public constant INIT_ISSUE_YEAR = 2025;
     uint256 public constant INIT_MAX_CONTRIBUTION_REWARD_RATIO = 800;
     bool public isCopper;
-//    uint256 public additionalTokenIssuanceAmount;
-//    uint256 public annualIssuanceAmountOfBasicReward;
-//    uint256 public annualIssuanceAmountOfContributionReward;
+    uint256 public totalIssuanceAmountOfBasicReward;
+    uint256 public totalIssuanceAmountOfContributionReward;
     uint256 public inflationRate;
 
     uint256 public currentTotalIssuedSupply;
@@ -131,6 +130,8 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     struct InflationInfo {
         uint256 totalSupply;
         uint256 additionalTokenIssuanceAmount;
+        uint256 annualIssuanceAmountOfBasicReward;
+        uint256 annualIssuanceAmountOfContributionReward;
         uint256 inflationRate;
     }
 
@@ -174,6 +175,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     event deprecatedFinalityRewardDeposit(address indexed validator, uint256 amount);
 
     event burnedAddressUpdated(address indexed addr, bool isAdded);
+    event inflationRecordUpdated(uint256 indexed year, uint256 inflationRate, uint256 additionalTokenIssuanceAmount);
 
     event validatorJailed(address indexed validator);  // @dev deprecated
     event validatorEmptyJailed(address indexed validator);  // @dev deprecated
@@ -407,11 +409,16 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     /**
     * @dev update current total supply
      *
-     * @param additionalAmount The additional amount of the block
+     * @param additionalTotalAmount The additional amount of the block
      * @param burnedAmount The total burned amount
+     * @param additionalBasicRewardAmount The additional basic reward amount of the block
+     * @param additionalContributionRewardAmount The additional contribution reward amount of the block
      */
-    function updateCurrentTotalSupply(uint256 additionalAmount,uint256 burnedAmount) external onlyCoinbase onlyInit onlyZeroGasPrice {
-        currentTotalIssuedSupply += additionalAmount;
+    function updateCurrentTotalSupply(uint256 additionalTotalAmount,uint256 burnedAmount,
+        uint256 additionalBasicRewardAmount,uint256 additionalContributionRewardAmount) external onlyCoinbase onlyInit onlyZeroGasPrice {
+        currentTotalIssuedSupply += additionalTotalAmount;
+        totalIssuanceAmountOfBasicReward += additionalBasicRewardAmount;
+        totalIssuanceAmountOfContributionReward += additionalContributionRewardAmount;
         currentTotalBurnedSupply = burnedAmount;
     }
 
@@ -420,14 +427,20 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      *
      * @param year The year of the inflation record
      * @param additionalAmount The additional amount of the year
+     * @param additionalBasicRewardAmount The additional basic reward amount of the year
+     * @param additionalContributionRewardAmount The additional contribution reward amount of the year
      * @param totalSupply The total supply of the year
      * @param newInflationRate The inflation rate of the year
      */
-    function updateInflationRecord(uint256 year, uint256 additionalAmount, uint256 totalSupply, uint256 newInflationRate) external onlyCoinbase onlyInit onlyZeroGasPrice {
+    function updateInflationRecord(uint256 year, uint256 additionalAmount, uint256 additionalBasicRewardAmount,
+        uint256 additionalContributionRewardAmount,uint256 totalSupply, uint256 newInflationRate) external onlyCoinbase onlyInit onlyZeroGasPrice {
         inflationRecord[year].additionalTokenIssuanceAmount = additionalAmount;
         inflationRecord[year].totalSupply = totalSupply;
         inflationRecord[year].inflationRate = newInflationRate;
+        inflationRecord[year].annualIssuanceAmountOfBasicReward = additionalBasicRewardAmount;
+        inflationRecord[year].annualIssuanceAmountOfContributionReward = additionalContributionRewardAmount;
         inflationRate = newInflationRate;
+        emit inflationRecordUpdated(year, newInflationRate,additionalAmount);
     }
     /*----------------- View Functions -----------------*/
     /**
@@ -619,6 +632,14 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     function getTotalSupply() public view returns (uint256 totalIssued, uint256 totalBurned) {
         totalIssued = currentTotalIssuedSupply;
         totalBurned = currentTotalBurnedSupply;
+    }
+
+    /**
+    * @notice Return the total issuance amount of reward.
+     */
+    function getTotalIssuanceAmountOfReward() public view returns (uint256 totalBasicReward, uint256 totalContributionReward) {
+        totalBasicReward = totalIssuanceAmountOfBasicReward;
+        totalContributionReward = totalIssuanceAmountOfContributionReward;
     }
 
     /**

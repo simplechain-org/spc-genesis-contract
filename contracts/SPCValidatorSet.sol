@@ -175,7 +175,14 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     event deprecatedFinalityRewardDeposit(address indexed validator, uint256 amount);
 
     event burnedAddressUpdated(address indexed addr, bool isAdded);
-    event inflationRecordUpdated(uint256 indexed year, uint256 inflationRate, uint256 additionalTokenIssuanceAmount);
+    event inflationRecordUpdated(
+        uint256 indexed year,
+        uint256 totalSupply,
+        uint256 inflationRate,
+        uint256 additionalTokenIssuanceAmount,
+        uint256 annualIssuanceAmountOfBasicReward,
+        uint256 annualIssuanceAmountOfContributionReward
+    );
 
     event validatorJailed(address indexed validator); // @dev deprecated
     event validatorEmptyJailed(address indexed validator); // @dev deprecated
@@ -426,9 +433,10 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
         uint256 additionalBasicRewardAmount,
         uint256 additionalContributionRewardAmount
     ) external onlyCoinbase onlyInit onlyZeroGasPrice {
-        currentTotalIssuedSupply += additionalTotalAmount;
-        totalIssuanceAmountOfBasicReward += additionalBasicRewardAmount;
-        totalIssuanceAmountOfContributionReward += additionalContributionRewardAmount;
+        currentTotalIssuedSupply = currentTotalIssuedSupply.add(additionalTotalAmount);
+        totalIssuanceAmountOfBasicReward = totalIssuanceAmountOfBasicReward.add(additionalBasicRewardAmount);
+        totalIssuanceAmountOfContributionReward =
+            totalIssuanceAmountOfContributionReward.add(additionalContributionRewardAmount);
         currentTotalBurnedSupply = burnedAmount;
     }
 
@@ -456,7 +464,14 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
         inflationRecord[year].annualIssuanceAmountOfBasicReward = additionalBasicRewardAmount;
         inflationRecord[year].annualIssuanceAmountOfContributionReward = additionalContributionRewardAmount;
         inflationRate = newInflationRate;
-        emit inflationRecordUpdated(year, newInflationRate, additionalAmount);
+        emit inflationRecordUpdated(
+            year,
+            totalSupply,
+            newInflationRate,
+            additionalAmount,
+            additionalBasicRewardAmount,
+            additionalContributionRewardAmount
+        );
     }
     /*----------------- View Functions -----------------*/
     /**

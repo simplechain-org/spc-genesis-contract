@@ -48,10 +48,10 @@ contract SlashIndicator is ISlashIndicator, System, IParamSubscriber, IApplicati
     event paramChange(string key, bytes value);
     event failedFelony(address indexed validator, uint256 slashCount, bytes failReason);
 
-    event maliciousVoteSlashed(bytes32 indexed voteAddrSlice);  // @dev deprecated
-    event knownResponse(uint32 code);  // @dev deprecated
-    event unKnownResponse(uint32 code);  // @dev deprecated
-    event crashResponse();  // @dev deprecated
+    event maliciousVoteSlashed(bytes32 indexed voteAddrSlice); // @dev deprecated
+    event knownResponse(uint32 code); // @dev deprecated
+    event unKnownResponse(uint32 code); // @dev deprecated
+    event crashResponse(); // @dev deprecated
 
     struct Indicator {
         uint256 height;
@@ -108,7 +108,9 @@ contract SlashIndicator is ISlashIndicator, System, IParamSubscriber, IApplicati
      *
      * @param validator The validator who should have produced the current block
      */
-    function slash(address validator) external onlyCoinbase onlyInit oncePerBlock onlyZeroGasPrice {
+    function slash(
+        address validator
+    ) external onlyCoinbase onlyInit oncePerBlock onlyZeroGasPrice {
         if (!ISPCValidatorSet(VALIDATOR_CONTRACT_ADDR).isCurrentValidator(validator)) {
             return;
         }
@@ -207,7 +209,9 @@ contract SlashIndicator is ISlashIndicator, System, IParamSubscriber, IApplicati
         }
     }
 
-    function submitFinalityViolationEvidence(FinalityEvidence memory _evidence) public onlyInit {
+    function submitFinalityViolationEvidence(
+        FinalityEvidence memory _evidence
+    ) public onlyInit {
         require(enableMaliciousVoteSlash, "malicious vote slash not enabled");
         if (felonySlashRewardRatio == 0) {
             felonySlashRewardRatio = INIT_FELONY_SLASH_REWARD_RATIO;
@@ -312,7 +316,9 @@ contract SlashIndicator is ISlashIndicator, System, IParamSubscriber, IApplicati
      *
      * @param validator Who will be jailed
      */
-    function sendFelonyPackage(address validator) external override(ISlashIndicator) onlyValidatorContract onlyInit {
+    function sendFelonyPackage(
+        address validator
+    ) external override(ISlashIndicator) onlyValidatorContract onlyInit {
         emit failedFelony(validator, 0, "deprecated");
     }
 
@@ -397,12 +403,16 @@ contract SlashIndicator is ISlashIndicator, System, IParamSubscriber, IApplicati
     }
 
     /*----------------- query api -----------------*/
-    function getSlashIndicator(address validator) external view returns (uint256, uint256) {
+    function getSlashIndicator(
+        address validator
+    ) external view returns (uint256, uint256) {
         Indicator memory indicator = indicators[validator];
         return (indicator.height, indicator.count);
     }
 
-    function encodeSlashPackage(address valAddr) internal view returns (bytes memory) {
+    function encodeSlashPackage(
+        address valAddr
+    ) internal view returns (bytes memory) {
         bytes[] memory elements = new bytes[](4);
         elements[0] = valAddr.encodeAddress();
         elements[1] = uint256(block.number).encodeUint();
@@ -411,7 +421,9 @@ contract SlashIndicator is ISlashIndicator, System, IParamSubscriber, IApplicati
         return elements.encodeList();
     }
 
-    function encodeVoteSlashPackage(bytes memory voteAddr) internal view returns (bytes memory) {
+    function encodeVoteSlashPackage(
+        bytes memory voteAddr
+    ) internal view returns (bytes memory) {
         bytes[] memory elements = new bytes[](4);
         elements[0] = voteAddr.encodeBytes();
         elements[1] = uint256(block.number).encodeUint();

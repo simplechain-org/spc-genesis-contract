@@ -2,5 +2,7 @@
 pragma solidity 0.8.17;
 
 interface ISPCValidatorSet {
-    function felony(address consensusAddress) external;
+    function felony(
+        address consensusAddress
+    ) external;
 }

@@ -56,7 +56,9 @@ contract SystemReward is System, IParamSubscriber, ISystemReward {
         return actualAmount;
     }
 
-    function isOperator(address addr) external view returns (bool) {
+    function isOperator(
+        address addr
+    ) external view returns (bool) {
         return operators[addr];
     }
 

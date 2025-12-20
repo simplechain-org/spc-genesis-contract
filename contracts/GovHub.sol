@@ -10,7 +10,7 @@ contract GovHub is System, IApplication {
 
     event failReasonWithStr(string message);
     event failReasonWithBytes(bytes message);
-    event paramChange(string key, bytes value);  // @dev deprecated
+    event paramChange(string key, bytes value); // @dev deprecated
 
     struct ParamChangePackage {
         string key;
@@ -40,7 +40,9 @@ contract GovHub is System, IApplication {
         notifyUpdates(proposal);
     }
 
-    function notifyUpdates(ParamChangePackage memory proposal) internal returns (uint32) {
+    function notifyUpdates(
+        ParamChangePackage memory proposal
+    ) internal returns (uint32) {
         if (!isContract(proposal.target)) {
             emit failReasonWithStr("the target is not a contract");
             return ERROR_TARGET_NOT_CONTRACT;

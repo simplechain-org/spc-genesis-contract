@@ -78,8 +78,12 @@ interface SPCValidatorSet {
     function bscChainID() external view returns (uint16);
     function burnRatio() external view returns (uint256);
     function burnRatioInitialized() external view returns (bool);
-    function canEnterMaintenance(uint256 index) external view returns (bool);
-    function currentValidatorSet(uint256)
+    function canEnterMaintenance(
+        uint256 index
+    ) external view returns (bool);
+    function currentValidatorSet(
+        uint256
+    )
         external
         view
         returns (
@@ -90,16 +94,28 @@ interface SPCValidatorSet {
             bool jailed,
             uint256 incoming
         );
-    function currentValidatorSetMap(address) external view returns (uint256);
-    function currentVoteAddrFullSet(uint256) external view returns (bytes memory);
-    function deposit(address valAddr) external payable;
+    function currentValidatorSetMap(
+        address
+    ) external view returns (uint256);
+    function currentVoteAddrFullSet(
+        uint256
+    ) external view returns (bytes memory);
+    function deposit(
+        address valAddr
+    ) external payable;
     function distributeFinalityReward(address[] memory valAddrs, uint256[] memory weights) external;
     function enterMaintenance() external;
     function exitMaintenance() external;
     function expireTimeSecondGap() external view returns (uint256);
-    function felony(address validator) external;
-    function getCurrentValidatorIndex(address validator) external view returns (uint256);
-    function getIncoming(address validator) external view returns (uint256);
+    function felony(
+        address validator
+    ) external;
+    function getCurrentValidatorIndex(
+        address validator
+    ) external view returns (uint256);
+    function getIncoming(
+        address validator
+    ) external view returns (uint256);
     function getLivingValidators() external view returns (address[] memory, bytes[] memory);
     function getMiningValidators() external view returns (address[] memory, bytes[] memory);
     function getTurnLength() external view returns (uint256);
@@ -110,22 +126,34 @@ interface SPCValidatorSet {
     function handleSynPackage(uint8, bytes memory msgBytes) external returns (bytes memory responsePayload);
     function init() external;
     function systemRewardBaseRatio() external view returns (uint256);
-    function isCurrentValidator(address validator) external view returns (bool);
-    function isMonitoredForMaliciousVote(bytes memory voteAddr) external view returns (bool);
+    function isCurrentValidator(
+        address validator
+    ) external view returns (bool);
+    function isMonitoredForMaliciousVote(
+        bytes memory voteAddr
+    ) external view returns (bool);
     function isSystemRewardIncluded() external view returns (bool);
-    function isWorkingValidator(uint256 index) external view returns (bool);
+    function isWorkingValidator(
+        uint256 index
+    ) external view returns (bool);
     function maintainSlashScale() external view returns (uint256);
     function maxNumOfCandidates() external view returns (uint256);
     function maxNumOfMaintaining() external view returns (uint256);
     function maxNumOfWorkingCandidates() external view returns (uint256);
-    function misdemeanor(address validator) external;
+    function misdemeanor(
+        address validator
+    ) external;
     function numOfCabinets() external view returns (uint256);
     function numOfJailed() external view returns (uint256);
     function numOfMaintaining() external view returns (uint256);
     function previousBalanceOfSystemReward() external view returns (uint256);
     function previousHeight() external view returns (uint256);
-    function previousVoteAddrFullSet(uint256) external view returns (bytes memory);
-    function removeTmpMigratedValidator(address validator) external;
+    function previousVoteAddrFullSet(
+        uint256
+    ) external view returns (bytes memory);
+    function removeTmpMigratedValidator(
+        address validator
+    ) external;
     function totalInComing() external view returns (uint256);
     function turnLength() external view returns (uint256);
     function updateParam(string memory key, bytes memory value) external;
@@ -135,9 +163,11 @@ interface SPCValidatorSet {
         bytes[] memory _voteAddrs
     ) external;
     function updateValidatorUptimeRecord(uint256 index, address valAddr, address inTurnValAddr) external;
-    function getValidatorUptimeRecord(address val, uint256 index) external view returns (uint256 inturnCounts, uint256 outturnCounts);
-    function validatorExtraSet(uint256)
-        external
-        view
-        returns (uint256 enterMaintenanceHeight, bool isMaintaining, bytes memory voteAddress);
+    function getValidatorUptimeRecord(
+        address val,
+        uint256 index
+    ) external view returns (uint256 inturnCounts, uint256 outturnCounts);
+    function validatorExtraSet(
+        uint256
+    ) external view returns (uint256 enterMaintenanceHeight, bool isMaintaining, bytes memory voteAddress);
 }

@@ -18,7 +18,9 @@ library RLPDecode {
         uint256 nextPtr; // Position of the next item in the list.
     }
 
-    function next(Iterator memory self) internal pure returns (RLPItem memory) {
+    function next(
+        Iterator memory self
+    ) internal pure returns (RLPItem memory) {
         require(hasNext(self));
 
         uint256 ptr = self.nextPtr;
@@ -28,12 +30,16 @@ library RLPDecode {
         return RLPItem(itemLength, ptr);
     }
 
-    function hasNext(Iterator memory self) internal pure returns (bool) {
+    function hasNext(
+        Iterator memory self
+    ) internal pure returns (bool) {
         RLPItem memory item = self.item;
         return self.nextPtr < item.memPtr + item.len;
     }
 
-    function toRLPItem(bytes memory self) internal pure returns (RLPItem memory) {
+    function toRLPItem(
+        bytes memory self
+    ) internal pure returns (RLPItem memory) {
         uint256 memPtr;
         assembly {
             memPtr := add(self, 0x20)
@@ -42,22 +48,30 @@ library RLPDecode {
         return RLPItem(self.length, memPtr);
     }
 
-    function iterator(RLPItem memory self) internal pure returns (Iterator memory) {
+    function iterator(
+        RLPItem memory self
+    ) internal pure returns (Iterator memory) {
         require(isList(self));
 
         uint256 ptr = self.memPtr + _payloadOffset(self.memPtr);
         return Iterator(self, ptr);
     }
 
-    function rlpLen(RLPItem memory item) internal pure returns (uint256) {
+    function rlpLen(
+        RLPItem memory item
+    ) internal pure returns (uint256) {
         return item.len;
     }
 
-    function payloadLen(RLPItem memory item) internal pure returns (uint256) {
+    function payloadLen(
+        RLPItem memory item
+    ) internal pure returns (uint256) {
         return item.len - _payloadOffset(item.memPtr);
     }
 
-    function toList(RLPItem memory item) internal pure returns (RLPItem[] memory) {
+    function toList(
+        RLPItem memory item
+    ) internal pure returns (RLPItem[] memory) {
         require(isList(item));
 
         uint256 items = numItems(item);
@@ -74,7 +88,9 @@ library RLPDecode {
         return result;
     }
 
-    function isList(RLPItem memory item) internal pure returns (bool) {
+    function isList(
+        RLPItem memory item
+    ) internal pure returns (bool) {
         if (item.len == 0) return false;
 
         uint8 byte0;
@@ -89,7 +105,9 @@ library RLPDecode {
         return true;
     }
 
-    function toRlpBytes(RLPItem memory item) internal pure returns (bytes memory) {
+    function toRlpBytes(
+        RLPItem memory item
+    ) internal pure returns (bytes memory) {
         bytes memory result = new bytes(item.len);
         if (result.length == 0) return result;
 
@@ -102,7 +120,9 @@ library RLPDecode {
         return result;
     }
 
-    function toBoolean(RLPItem memory item) internal pure returns (bool) {
+    function toBoolean(
+        RLPItem memory item
+    ) internal pure returns (bool) {
         require(item.len == 1);
         uint256 result;
         uint256 memPtr = item.memPtr;
@@ -117,14 +137,18 @@ library RLPDecode {
         }
     }
 
-    function toAddress(RLPItem memory item) internal pure returns (address) {
+    function toAddress(
+        RLPItem memory item
+    ) internal pure returns (address) {
         // 1 byte for the length prefix
         require(item.len == 21);
 
         return address(toUint(item));
     }
 
-    function toUint(RLPItem memory item) internal pure returns (uint256) {
+    function toUint(
+        RLPItem memory item
+    ) internal pure returns (uint256) {
         require(item.len > 0 && item.len <= 33);
 
         uint256 offset = _payloadOffset(item.memPtr);
@@ -144,7 +168,9 @@ library RLPDecode {
     }
 
     // enforces 32 byte length
-    function toUintStrict(RLPItem memory item) internal pure returns (uint256) {
+    function toUintStrict(
+        RLPItem memory item
+    ) internal pure returns (uint256) {
         // one byte prefix
         require(item.len == 33);
 
@@ -157,7 +183,9 @@ library RLPDecode {
         return result;
     }
 
-    function toBytes(RLPItem memory item) internal pure returns (bytes memory) {
+    function toBytes(
+        RLPItem memory item
+    ) internal pure returns (bytes memory) {
         require(item.len > 0);
 
         uint256 offset = _payloadOffset(item.memPtr);
@@ -173,7 +201,9 @@ library RLPDecode {
         return result;
     }
 
-    function numItems(RLPItem memory item) private pure returns (uint256) {
+    function numItems(
+        RLPItem memory item
+    ) private pure returns (uint256) {
         if (item.len == 0) return 0;
 
         uint256 count = 0;
@@ -187,7 +217,9 @@ library RLPDecode {
         return count;
     }
 
-    function _itemLength(uint256 memPtr) private pure returns (uint256) {
+    function _itemLength(
+        uint256 memPtr
+    ) private pure returns (uint256) {
         uint256 itemLen;
         uint256 byte0;
         assembly {
@@ -227,7 +259,9 @@ library RLPDecode {
     }
 
     // @return number of bytes until the data
-    function _payloadOffset(uint256 memPtr) private pure returns (uint256) {
+    function _payloadOffset(
+        uint256 memPtr
+    ) private pure returns (uint256) {
         uint256 byte0;
         assembly {
             byte0 := byte(0, mload(memPtr))

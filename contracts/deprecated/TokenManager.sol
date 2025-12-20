@@ -22,19 +22,19 @@ contract TokenManager is System, IApplication, IParamSubscriber {
 
     mapping(bytes32 => BindSynPackage) public bindPackageRecord;
 
-    mapping(address => bool) public mirrorPendingRecord;  // @dev deprecated
-    mapping(address => bool) public boundByMirror;  // @dev deprecated
-    uint256 public mirrorFee;  // @dev deprecated
-    uint256 public syncFee;  // @dev deprecated
+    mapping(address => bool) public mirrorPendingRecord; // @dev deprecated
+    mapping(address => bool) public boundByMirror; // @dev deprecated
+    uint256 public mirrorFee; // @dev deprecated
+    uint256 public syncFee; // @dev deprecated
 
-    event bindSuccess(address indexed contractAddr, string bep2Symbol, uint256 totalSupply, uint256 peggyAmount);  // @dev deprecated
-    event bindFailure(address indexed contractAddr, string bep2Symbol, uint32 failedReason);  // @dev deprecated
-    event unexpectedPackage(uint8 channelId, bytes msgBytes);  // @dev deprecated
-    event paramChange(string key, bytes value);  // @dev deprecated
-    event mirrorSuccess(address indexed bep20Addr, bytes32 bep2Symbol);  // @dev deprecated
-    event mirrorFailure(address indexed bep20Addr, uint8 errCode);  // @dev deprecated
-    event syncSuccess(address indexed bep20Addr);  // @dev deprecated
-    event syncFailure(address indexed bep20Addr, uint8 errCode);  // @dev deprecated
+    event bindSuccess(address indexed contractAddr, string bep2Symbol, uint256 totalSupply, uint256 peggyAmount); // @dev deprecated
+    event bindFailure(address indexed contractAddr, string bep2Symbol, uint32 failedReason); // @dev deprecated
+    event unexpectedPackage(uint8 channelId, bytes msgBytes); // @dev deprecated
+    event paramChange(string key, bytes value); // @dev deprecated
+    event mirrorSuccess(address indexed bep20Addr, bytes32 bep2Symbol); // @dev deprecated
+    event mirrorFailure(address indexed bep20Addr, uint8 errCode); // @dev deprecated
+    event syncSuccess(address indexed bep20Addr); // @dev deprecated
+    event syncFailure(address indexed bep20Addr, uint8 errCode); // @dev deprecated
 
     function handleSynPackage(
         uint8 channelId,
@@ -59,7 +59,9 @@ contract TokenManager is System, IApplication, IParamSubscriber {
         revert("deprecated");
     }
 
-    function expireBind(string memory bep2Symbol) public payable returns (bool) {
+    function expireBind(
+        string memory bep2Symbol
+    ) public payable returns (bool) {
         revert("deprecated");
     }
 
@@ -75,7 +77,9 @@ contract TokenManager is System, IApplication, IParamSubscriber {
         revert("deprecated");
     }
 
-    function queryRequiredLockAmountForBind(string memory symbol) public view returns (uint256) {
+    function queryRequiredLockAmountForBind(
+        string memory symbol
+    ) public view returns (uint256) {
         bytes32 bep2Symbol;
         assembly {
             bep2Symbol := mload(add(symbol, 32))

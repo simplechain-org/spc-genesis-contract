@@ -33,13 +33,19 @@ interface TokenRecoverPortal {
     function BC_FUSION_CHANNELID() external view returns (uint8);
     function SOURCE_CHAIN_ID() external view returns (string memory);
     function STAKING_CHANNELID() external view returns (uint8);
-    function addToBlackList(address account) external;
+    function addToBlackList(
+        address account
+    ) external;
     function approvalAddress() external view returns (address);
-    function blackList(address) external view returns (bool);
+    function blackList(
+        address
+    ) external view returns (bool);
     function cancelTokenRecover(bytes32 tokenSymbol, address attacker) external;
     function initialize() external;
     function isPaused() external view returns (bool);
-    function isRecovered(bytes32 node) external view returns (bool);
+    function isRecovered(
+        bytes32 node
+    ) external view returns (bool);
     function merkleRoot() external view returns (bytes32);
     function merkleRootAlreadyInit() external view returns (bool);
     function pause() external;
@@ -51,7 +57,9 @@ interface TokenRecoverPortal {
         bytes memory approvalSignature,
         bytes32[] memory merkleProof
     ) external;
-    function removeFromBlackList(address account) external;
+    function removeFromBlackList(
+        address account
+    ) external;
     function resume() external;
     function updateParam(string memory key, bytes memory value) external;
 }

@@ -79,15 +79,24 @@ interface CrossChain {
         bytes memory proof0,
         bytes memory proof1
     ) external;
-    function challenged(bytes32) external view returns (bool);
-    function channelHandlerContractMap(uint8) external view returns (address);
-    function channelReceiveSequenceMap(uint8) external view returns (uint64);
-    function channelSendSequenceMap(uint8) external view returns (uint64);
-    function channelSyncedHeaderMap(uint8) external view returns (uint64);
-    function emergencyProposals(bytes32)
-        external
-        view
-        returns (uint16 quorum, uint128 expiredAt, bytes32 contentHash);
+    function challenged(
+        bytes32
+    ) external view returns (bool);
+    function channelHandlerContractMap(
+        uint8
+    ) external view returns (address);
+    function channelReceiveSequenceMap(
+        uint8
+    ) external view returns (uint64);
+    function channelSendSequenceMap(
+        uint8
+    ) external view returns (uint64);
+    function channelSyncedHeaderMap(
+        uint8
+    ) external view returns (uint64);
+    function emergencyProposals(
+        bytes32
+    ) external view returns (uint16 quorum, uint128 expiredAt, bytes32 contentHash);
     function encodePayload(
         uint8 packageType,
         uint256 relayFee,
@@ -101,11 +110,15 @@ interface CrossChain {
         uint8 channelId
     ) external;
     function init() external;
-    function isRelayRewardFromSystemReward(uint8) external view returns (bool);
+    function isRelayRewardFromSystemReward(
+        uint8
+    ) external view returns (bool);
     function isSuspended() external view returns (bool);
     function oracleSequence() external view returns (int64);
     function previousTxHeight() external view returns (uint256);
-    function quorumMap(bytes32) external view returns (uint16);
+    function quorumMap(
+        bytes32
+    ) external view returns (uint16);
     function registeredContractChannelMap(address, uint8) external view returns (bool);
     function reopen() external;
     function sendSynPackage(uint8 channelId, bytes memory msgBytes, uint256 relayFee) external;

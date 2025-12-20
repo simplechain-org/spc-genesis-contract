@@ -63,7 +63,9 @@ contract MaliciousToken is Context, ITestToken, Ownable {
     /**
      * @dev See {BEP20-balanceOf}.
      */
-    function balanceOf(address account) external view returns (uint256) {
+    function balanceOf(
+        address account
+    ) external view returns (uint256) {
         return _balances[account];
     }
 

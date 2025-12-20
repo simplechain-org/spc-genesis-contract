@@ -25,7 +25,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
 
     /*----------------- state of the contract -----------------*/
     Validator[] public currentValidatorSet;
-    uint256 public expireTimeSecondGap;  // @dev deprecated
+    uint256 public expireTimeSecondGap; // @dev deprecated
     uint256 public totalInComing;
 
     // key is the `consensusAddress` of `Validator`,
@@ -98,7 +98,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     mapping(address => mapping(uint256 => uint256)) public validatorOutTurnRecord;
 
     // year => inflationInfo
-    mapping(uint256 => InflationInfo ) public inflationRecord;
+    mapping(uint256 => InflationInfo) public inflationRecord;
     address[] public burnedAddressList;
 
     struct Validator {
@@ -177,21 +177,20 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     event burnedAddressUpdated(address indexed addr, bool isAdded);
     event inflationRecordUpdated(uint256 indexed year, uint256 inflationRate, uint256 additionalTokenIssuanceAmount);
 
-    event validatorJailed(address indexed validator);  // @dev deprecated
-    event validatorEmptyJailed(address indexed validator);  // @dev deprecated
-    event batchTransfer(uint256 amount);  // @dev deprecated
-    event batchTransferFailed(uint256 indexed amount, string reason);  // @dev deprecated
-    event batchTransferLowerFailed(uint256 indexed amount, bytes reason);  // @dev deprecated
-    event directTransfer(address payable indexed validator, uint256 amount);  // @dev deprecated
-    event directTransferFail(address payable indexed validator, uint256 amount);  // @dev deprecated
-    event failReasonWithStr(string message);  // @dev deprecated
-    event unexpectedPackage(uint8 channelId, bytes msgBytes);  // @dev deprecated
-    event tmpValidatorSetUpdated(uint256 validatorsNum);  // @dev deprecated
+    event validatorJailed(address indexed validator); // @dev deprecated
+    event validatorEmptyJailed(address indexed validator); // @dev deprecated
+    event batchTransfer(uint256 amount); // @dev deprecated
+    event batchTransferFailed(uint256 indexed amount, string reason); // @dev deprecated
+    event batchTransferLowerFailed(uint256 indexed amount, bytes reason); // @dev deprecated
+    event directTransfer(address payable indexed validator, uint256 amount); // @dev deprecated
+    event directTransferFail(address payable indexed validator, uint256 amount); // @dev deprecated
+    event failReasonWithStr(string message); // @dev deprecated
+    event unexpectedPackage(uint8 channelId, bytes msgBytes); // @dev deprecated
+    event tmpValidatorSetUpdated(uint256 validatorsNum); // @dev deprecated
 
     /*----------------- init -----------------*/
     function init() external onlyNotInit {
-        (ValidatorSetPackage memory validatorSetPkg, bool valid) =
-            decodeValidatorSet(INIT_VALIDATORSET_BYTES);
+        (ValidatorSetPackage memory validatorSetPkg, bool valid) = decodeValidatorSet(INIT_VALIDATORSET_BYTES);
         require(valid, "failed to parse init validatorSet");
         for (uint256 i; i < validatorSetPkg.validatorSet.length; ++i) {
             currentValidatorSet.push(validatorSetPkg.validatorSet[i]);
@@ -278,7 +277,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      *
      * @param valAddr The validator address who produced the current block
      */
-    function deposit(address valAddr) external payable onlyCoinbase onlyInit noEmptyDeposit onlyZeroGasPrice {
+    function deposit(
+        address valAddr
+    ) external payable onlyCoinbase onlyInit noEmptyDeposit onlyZeroGasPrice {
         uint256 value = msg.value;
         uint256 index = currentValidatorSetMap[valAddr];
 
@@ -398,7 +399,12 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      * @param valAddr The validator address who produced the current block
      * @param inTurnValAddr The validator address who should produce the current block
      */
-    function updateValidatorUptimeRecord(uint256 index,address valAddr, address inTurnValAddr) external onlyCoinbase onlyInit onlyZeroGasPrice {
+
+    function updateValidatorUptimeRecord(
+        uint256 index,
+        address valAddr,
+        address inTurnValAddr
+    ) external onlyCoinbase onlyInit onlyZeroGasPrice {
         if (inTurnValAddr != valAddr) {
             validatorOutTurnRecord[inTurnValAddr][index] += 1;
         } else {
@@ -407,15 +413,19 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     }
 
     /**
-    * @dev update current total supply
+     * @dev update current total supply
      *
      * @param additionalTotalAmount The additional amount of the block
      * @param burnedAmount The total burned amount
      * @param additionalBasicRewardAmount The additional basic reward amount of the block
      * @param additionalContributionRewardAmount The additional contribution reward amount of the block
      */
-    function updateCurrentTotalSupply(uint256 additionalTotalAmount,uint256 burnedAmount,
-        uint256 additionalBasicRewardAmount,uint256 additionalContributionRewardAmount) external onlyCoinbase onlyInit onlyZeroGasPrice {
+    function updateCurrentTotalSupply(
+        uint256 additionalTotalAmount,
+        uint256 burnedAmount,
+        uint256 additionalBasicRewardAmount,
+        uint256 additionalContributionRewardAmount
+    ) external onlyCoinbase onlyInit onlyZeroGasPrice {
         currentTotalIssuedSupply += additionalTotalAmount;
         totalIssuanceAmountOfBasicReward += additionalBasicRewardAmount;
         totalIssuanceAmountOfContributionReward += additionalContributionRewardAmount;
@@ -432,20 +442,27 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      * @param totalSupply The total supply of the year
      * @param newInflationRate The inflation rate of the year
      */
-    function updateInflationRecord(uint256 year, uint256 additionalAmount, uint256 additionalBasicRewardAmount,
-        uint256 additionalContributionRewardAmount,uint256 totalSupply, uint256 newInflationRate) external onlyCoinbase onlyInit onlyZeroGasPrice {
+    function updateInflationRecord(
+        uint256 year,
+        uint256 additionalAmount,
+        uint256 additionalBasicRewardAmount,
+        uint256 additionalContributionRewardAmount,
+        uint256 totalSupply,
+        uint256 newInflationRate
+    ) external onlyCoinbase onlyInit onlyZeroGasPrice {
         inflationRecord[year].additionalTokenIssuanceAmount = additionalAmount;
         inflationRecord[year].totalSupply = totalSupply;
         inflationRecord[year].inflationRate = newInflationRate;
         inflationRecord[year].annualIssuanceAmountOfBasicReward = additionalBasicRewardAmount;
         inflationRecord[year].annualIssuanceAmountOfContributionReward = additionalContributionRewardAmount;
         inflationRate = newInflationRate;
-        emit inflationRecordUpdated(year, newInflationRate,additionalAmount);
+        emit inflationRecordUpdated(year, newInflationRate, additionalAmount);
     }
     /*----------------- View Functions -----------------*/
     /**
      * @notice Return the vote address and consensus address of the validators in `currentValidatorSet` that are not jailed
      */
+
     function getLivingValidators() external view override returns (address[] memory, bytes[] memory) {
         uint256 n = currentValidatorSet.length;
         uint256 living;
@@ -551,7 +568,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     /**
      * @notice Return the current incoming of the validator
      */
-    function getIncoming(address validator) external view returns (uint256) {
+    function getIncoming(
+        address validator
+    ) external view returns (uint256) {
         uint256 index = currentValidatorSetMap[validator];
         if (index <= 0) {
             return 0;
@@ -564,7 +583,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      *
      * @param index The index of the validator in `currentValidatorSet`(from 0 to `currentValidatorSet.length-1`)
      */
-    function isWorkingValidator(uint256 index) public view returns (bool) {
+    function isWorkingValidator(
+        uint256 index
+    ) public view returns (bool) {
         if (index >= currentValidatorSet.length) {
             return false;
         }
@@ -581,7 +602,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      * @notice Return whether the validator is a working validator(not jailed or maintaining) by consensus address
      * Will return false if the validator is not in `currentValidatorSet`
      */
-    function isCurrentValidator(address validator) external view override returns (bool) {
+    function isCurrentValidator(
+        address validator
+    ) external view override returns (bool) {
         uint256 index = currentValidatorSetMap[validator];
         if (index <= 0) {
             return false;
@@ -595,7 +618,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     /**
      * @notice Return the index of the validator in `currentValidatorSet`(from 0 to `currentValidatorSet.length-1`)
      */
-    function getCurrentValidatorIndex(address validator) public view returns (uint256) {
+    function getCurrentValidatorIndex(
+        address validator
+    ) public view returns (uint256) {
         uint256 index = currentValidatorSetMap[validator];
         require(index > 0, "only current validators");
 
@@ -621,7 +646,10 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     /**
      * @notice Return the uptime record of the validator at index.
      */
-    function getValidatorUptimeRecord(address val,uint256 index) public view returns (uint256 inturnCounts, uint256 outturnCounts) {
+    function getValidatorUptimeRecord(
+        address val,
+        uint256 index
+    ) public view returns (uint256 inturnCounts, uint256 outturnCounts) {
         inturnCounts = validatorInTurnRecord[val][index];
         outturnCounts = validatorOutTurnRecord[val][index];
     }
@@ -635,9 +663,13 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     }
 
     /**
-    * @notice Return the total issuance amount of reward.
+     * @notice Return the total issuance amount of reward.
      */
-    function getTotalIssuanceAmountOfReward() public view returns (uint256 totalBasicReward, uint256 totalContributionReward) {
+    function getTotalIssuanceAmountOfReward()
+        public
+        view
+        returns (uint256 totalBasicReward, uint256 totalContributionReward)
+    {
         totalBasicReward = totalIssuanceAmountOfBasicReward;
         totalContributionReward = totalIssuanceAmountOfContributionReward;
     }
@@ -652,7 +684,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     /**
      * @notice Check if an address is in the burned address list.
      */
-    function isBurnedAddress(address addr) public view returns (bool) {
+    function isBurnedAddress(
+        address addr
+    ) public view returns (bool) {
         for (uint256 i; i < burnedAddressList.length; ++i) {
             if (burnedAddressList[i] == addr) {
                 return true;
@@ -662,14 +696,18 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     }
 
     /*----------------- For slash -----------------*/
-    function misdemeanor(address validator) external override onlySlash initValidatorExtraSet {
+    function misdemeanor(
+        address validator
+    ) external override onlySlash initValidatorExtraSet {
         uint256 validatorIndex = _misdemeanor(validator);
         if (canEnterMaintenance(validatorIndex)) {
             _enterMaintenance(validator, validatorIndex);
         }
     }
 
-    function felony(address validator) external override initValidatorExtraSet {
+    function felony(
+        address validator
+    ) external override initValidatorExtraSet {
         require(msg.sender == SLASH_CONTRACT_ADDR || msg.sender == STAKE_HUB_ADDR, "only slash or stakeHub contract");
 
         uint256 index = currentValidatorSetMap[validator];
@@ -685,7 +723,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
         }
     }
 
-    function removeTmpMigratedValidator(address validator) external onlyStakeHub {
+    function removeTmpMigratedValidator(
+        address validator
+    ) external onlyStakeHub {
         revert("deprecated");
     }
 
@@ -693,7 +733,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     /**
      * @notice Return whether the validator at index could enter maintenance
      */
-    function canEnterMaintenance(uint256 index) public view returns (bool) {
+    function canEnterMaintenance(
+        uint256 index
+    ) public view returns (bool) {
         if (index >= currentValidatorSet.length) {
             return false;
         }
@@ -832,7 +874,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
             uint256 newInflationRate = BytesToTypes.bytesToUint256(32, value);
             require(
                 newInflationRate > 0 && newInflationRate < BLOCK_FEES_RATIO_SCALE,
-            "the inflationRate must be greater than 0 and less than 10000"
+                "the inflationRate must be greater than 0 and less than 10000"
             );
             inflationRate = newInflationRate;
         } else if (Memory.compareStrings(key, "addBurnedAddress")) {
@@ -987,7 +1029,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
             && v1.BBCFeeAddress == v2.BBCFeeAddress;
     }
 
-    function getVoteAddresses(address[] memory validators) internal view returns (bytes[] memory) {
+    function getVoteAddresses(
+        address[] memory validators
+    ) internal view returns (bytes[] memory) {
         uint256 n = currentValidatorSet.length;
         uint256 length = validators.length;
         bytes[] memory voteAddrs = new bytes[](length);
@@ -1058,7 +1102,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
         }
     }
 
-    function isMonitoredForMaliciousVote(bytes calldata voteAddr) external view override returns (bool) {
+    function isMonitoredForMaliciousVote(
+        bytes calldata voteAddr
+    ) external view override returns (bool) {
         uint256 m = currentVoteAddrFullSet.length;
         for (uint256 i; i < m; ++i) {
             if (BytesLib.equal(voteAddr, currentVoteAddrFullSet[i])) {
@@ -1076,7 +1122,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
         return false;
     }
 
-    function _misdemeanor(address validator) private returns (uint256) {
+    function _misdemeanor(
+        address validator
+    ) private returns (uint256) {
         uint256 index = currentValidatorSetMap[validator];
         if (index <= 0) {
             return ~uint256(0);
@@ -1263,11 +1311,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
         emit validatorExitMaintenance(validator);
     }
 
-    function decodeValidatorSet(bytes memory msgBytes)
-        internal
-        pure
-        returns (ValidatorSetPackage memory, bool)
-    {
+    function decodeValidatorSet(
+        bytes memory msgBytes
+    ) internal pure returns (ValidatorSetPackage memory, bool) {
         ValidatorSetPackage memory validatorSetPkg;
 
         RLPDecode.Iterator memory iter = msgBytes.toRLPItem().iterator();
@@ -1297,11 +1343,9 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
         return (validatorSetPkg, success);
     }
 
-    function decodeValidator(RLPDecode.RLPItem memory itemValidator)
-        internal
-        pure
-        returns (Validator memory, bytes memory, bool)
-    {
+    function decodeValidator(
+        RLPDecode.RLPItem memory itemValidator
+    ) internal pure returns (Validator memory, bytes memory, bool) {
         Validator memory validator;
         bytes memory voteAddr;
         RLPDecode.Iterator memory iter = itemValidator.iterator();

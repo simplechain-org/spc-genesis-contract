@@ -47,11 +47,15 @@ abstract contract Protectable is Initializable {
     }
 
     /*----------------- initializer -----------------*/
-    function __Protectable_init(address protector) internal onlyInitializing {
+    function __Protectable_init(
+        address protector
+    ) internal onlyInitializing {
         __Protectable_init_unchained(protector);
     }
 
-    function __Protectable_init_unchained(address protector) internal onlyInitializing {
+    function __Protectable_init_unchained(
+        address protector
+    ) internal onlyInitializing {
         _protector = protector;
     }
 
@@ -82,7 +86,9 @@ abstract contract Protectable is Initializable {
     /**
      * @dev Add an address to the black list
      */
-    function addToBlackList(address account) external virtual onlyProtector {
+    function addToBlackList(
+        address account
+    ) external virtual onlyProtector {
         blackList[account] = true;
         emit BlackListed(account);
     }
@@ -90,13 +96,17 @@ abstract contract Protectable is Initializable {
     /**
      * @dev Remove an address from the black list
      */
-    function removeFromBlackList(address account) external virtual onlyProtector {
+    function removeFromBlackList(
+        address account
+    ) external virtual onlyProtector {
         delete blackList[account];
         emit UnBlackListed(account);
     }
 
     /*----------------- internal functions -----------------*/
-    function _setProtector(address protector) internal {
+    function _setProtector(
+        address protector
+    ) internal {
         emit ProtectorChanged(_protector, protector);
         _protector = protector;
     }

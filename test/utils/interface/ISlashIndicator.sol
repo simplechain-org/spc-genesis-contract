@@ -65,19 +65,31 @@ interface SlashIndicator {
     function felonySlashRewardRatio() external view returns (uint256);
     function felonySlashScope() external view returns (uint256);
     function felonyThreshold() external view returns (uint256);
-    function getSlashIndicator(address validator) external view returns (uint256, uint256);
+    function getSlashIndicator(
+        address validator
+    ) external view returns (uint256, uint256);
     function getSlashThresholds() external view returns (uint256, uint256);
     function handleAckPackage(uint8, bytes memory msgBytes) external;
     function handleFailAckPackage(uint8, bytes memory) external;
     function handleSynPackage(uint8, bytes memory) external returns (bytes memory);
-    function indicators(address) external view returns (uint256 height, uint256 count, bool exist);
+    function indicators(
+        address
+    ) external view returns (uint256 height, uint256 count, bool exist);
     function init() external;
     function misdemeanorThreshold() external view returns (uint256);
     function previousHeight() external view returns (uint256);
-    function sendFelonyPackage(address validator) external;
-    function slash(address validator) external;
+    function sendFelonyPackage(
+        address validator
+    ) external;
+    function slash(
+        address validator
+    ) external;
     function submitDoubleSignEvidence(bytes memory header1, bytes memory header2) external;
-    function submitFinalityViolationEvidence(FinalityEvidence memory _evidence) external;
+    function submitFinalityViolationEvidence(
+        FinalityEvidence memory _evidence
+    ) external;
     function updateParam(string memory key, bytes memory value) external;
-    function validators(uint256) external view returns (address);
+    function validators(
+        uint256
+    ) external view returns (address);
 }

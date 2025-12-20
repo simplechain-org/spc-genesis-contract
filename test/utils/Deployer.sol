@@ -173,10 +173,9 @@ contract Deployer is Test {
         vm.stopPrank();
     }
 
-    function _createValidator(uint256 delegation)
-        internal
-        returns (address operatorAddress, address consensusAddress, address credit, bytes memory voteAddress)
-    {
+    function _createValidator(
+        uint256 delegation
+    ) internal returns (address operatorAddress, address consensusAddress, address credit, bytes memory voteAddress) {
         uint256 toLock = stakeHub.LOCK_AMOUNT();
 
         operatorAddress = _getNextUserAddress();
@@ -201,7 +200,9 @@ contract Deployer is Test {
         credit = stakeHub.getValidatorCreditContract(operatorAddress);
     }
 
-    function _batchCreateValidators(uint256 number)
+    function _batchCreateValidators(
+        uint256 number
+    )
         internal
         returns (
             address[] memory operatorAddrs,

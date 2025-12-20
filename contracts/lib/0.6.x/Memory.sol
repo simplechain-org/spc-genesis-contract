@@ -57,14 +57,18 @@ library Memory {
     }
 
     // Returns a memory pointer to the provided bytes array.
-    function ptr(bytes memory bts) internal pure returns (uint256 addr) {
+    function ptr(
+        bytes memory bts
+    ) internal pure returns (uint256 addr) {
         assembly {
             addr := bts
         }
     }
 
     // Returns a memory pointer to the data portion of the provided bytes array.
-    function dataPtr(bytes memory bts) internal pure returns (uint256 addr) {
+    function dataPtr(
+        bytes memory bts
+    ) internal pure returns (uint256 addr) {
         assembly {
             addr := add(bts, /*BYTES_HEADER_SIZE*/ 32)
         }
@@ -72,7 +76,9 @@ library Memory {
 
     // This function does the same as 'dataPtr(bytes memory)', but will also return the
     // length of the provided bytes array.
-    function fromBytes(bytes memory bts) internal pure returns (uint256 addr, uint256 len) {
+    function fromBytes(
+        bytes memory bts
+    ) internal pure returns (uint256 addr, uint256 len) {
         len = bts.length;
         assembly {
             addr := add(bts, /*BYTES_HEADER_SIZE*/ 32)
@@ -92,14 +98,18 @@ library Memory {
     }
 
     // Get the word stored at memory address 'addr' as a 'uint'.
-    function toUint(uint256 addr) internal pure returns (uint256 n) {
+    function toUint(
+        uint256 addr
+    ) internal pure returns (uint256 n) {
         assembly {
             n := mload(addr)
         }
     }
 
     // Get the word stored at memory address 'addr' as a 'bytes32'.
-    function toBytes32(uint256 addr) internal pure returns (bytes32 bts) {
+    function toBytes32(
+        uint256 addr
+    ) internal pure returns (bytes32 bts) {
         assembly {
             bts := mload(addr)
         }

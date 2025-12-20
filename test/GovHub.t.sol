@@ -7,7 +7,9 @@ contract GovHubTest is Deployer {
 
     function setUp() public { }
 
-    function testGovValidatorSet(uint16 value) public {
+    function testGovValidatorSet(
+        uint16 value
+    ) public {
         vm.assume(value >= 100);
         vm.assume(value <= 1e5);
 
@@ -18,7 +20,9 @@ contract GovHubTest is Deployer {
         _updateParamByGovHub(key, valueBytes, address(bscValidatorSet));
     }
 
-    function testGovTokenHub(uint256 value) public {
+    function testGovTokenHub(
+        uint256 value
+    ) public {
         vm.assume(value > 0);
         vm.assume(value <= 1e8);
         value = value * 1e10;
@@ -30,7 +34,9 @@ contract GovHubTest is Deployer {
         _updateParamByGovHub(key, valueBytes, address(tokenHub));
     }
 
-    function testGovLightClient(uint256 value) public {
+    function testGovLightClient(
+        uint256 value
+    ) public {
         vm.assume(value > 0);
         vm.assume(value <= 1e18);
 
@@ -56,7 +62,9 @@ contract GovHubTest is Deployer {
         _updateParamByGovHub(key, valueBytes, address(incentivize));
     }
 
-    function testGovCrossChain(uint16 value) public {
+    function testGovCrossChain(
+        uint16 value
+    ) public {
         vm.assume(value >= 10);
         vm.assume(value <= 10000);
 

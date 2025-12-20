@@ -36,7 +36,9 @@ interface SPCTimelock {
     function PROPOSER_ROLE() external view returns (bytes32);
     function STAKING_CHANNELID() external view returns (uint8);
     function TIMELOCK_ADMIN_ROLE() external view returns (bytes32);
-    function cancel(bytes32 id) external;
+    function cancel(
+        bytes32 id
+    ) external;
     function execute(
         address target,
         uint256 value,
@@ -52,8 +54,12 @@ interface SPCTimelock {
         bytes32 salt
     ) external payable;
     function getMinDelay() external view returns (uint256);
-    function getRoleAdmin(bytes32 role) external view returns (bytes32);
-    function getTimestamp(bytes32 id) external view returns (uint256);
+    function getRoleAdmin(
+        bytes32 role
+    ) external view returns (bytes32);
+    function getTimestamp(
+        bytes32 id
+    ) external view returns (uint256);
     function grantRole(bytes32 role, address account) external;
     function hasRole(bytes32 role, address account) external view returns (bool);
     function hashOperation(
@@ -71,10 +77,18 @@ interface SPCTimelock {
         bytes32 salt
     ) external pure returns (bytes32);
     function initialize() external;
-    function isOperation(bytes32 id) external view returns (bool);
-    function isOperationDone(bytes32 id) external view returns (bool);
-    function isOperationPending(bytes32 id) external view returns (bool);
-    function isOperationReady(bytes32 id) external view returns (bool);
+    function isOperation(
+        bytes32 id
+    ) external view returns (bool);
+    function isOperationDone(
+        bytes32 id
+    ) external view returns (bool);
+    function isOperationPending(
+        bytes32 id
+    ) external view returns (bool);
+    function isOperationReady(
+        bytes32 id
+    ) external view returns (bool);
     function onERC1155BatchReceived(
         address,
         address,
@@ -102,7 +116,11 @@ interface SPCTimelock {
         bytes32 salt,
         uint256 delay
     ) external;
-    function supportsInterface(bytes4 interfaceId) external view returns (bool);
-    function updateDelay(uint256 newDelay) external;
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external view returns (bool);
+    function updateDelay(
+        uint256 newDelay
+    ) external;
     function updateParam(string memory key, bytes memory value) external;
 }

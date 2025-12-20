@@ -11,7 +11,7 @@ contract CrossChain is System, ICrossChain, IParamSubscriber {
     uint256 public constant INIT_BATCH_SIZE = 50;
 
     // governable parameters
-    uint256 public batchSizeForOracle;  // @dev deprecated
+    uint256 public batchSizeForOracle; // @dev deprecated
 
     //state variables
     uint256 public previousTxHeight;
@@ -19,20 +19,20 @@ contract CrossChain is System, ICrossChain, IParamSubscriber {
     int64 public oracleSequence;
     mapping(uint8 => address) public channelHandlerContractMap;
     mapping(address => mapping(uint8 => bool)) public registeredContractChannelMap;
-    mapping(uint8 => uint64) public channelSendSequenceMap;  // @dev deprecated
+    mapping(uint8 => uint64) public channelSendSequenceMap; // @dev deprecated
     mapping(uint8 => uint64) public channelReceiveSequenceMap;
-    mapping(uint8 => bool) public isRelayRewardFromSystemReward;  // @dev deprecated
+    mapping(uint8 => bool) public isRelayRewardFromSystemReward; // @dev deprecated
 
     // to prevent the utilization of ancient block header
     mapping(uint8 => uint64) public channelSyncedHeaderMap;
 
     bool public isSuspended;
     // proposal type hash => latest emergency proposal
-    mapping(bytes32 => EmergencyProposal) public emergencyProposals;  // @dev deprecated
+    mapping(bytes32 => EmergencyProposal) public emergencyProposals; // @dev deprecated
     // proposal type hash => the threshold of proposal approved
-    mapping(bytes32 => uint16) public quorumMap;  // @dev deprecated
+    mapping(bytes32 => uint16) public quorumMap; // @dev deprecated
     // IAVL key hash => is challenged
-    mapping(bytes32 => bool) public challenged;  // @dev deprecated
+    mapping(bytes32 => bool) public challenged; // @dev deprecated
 
     // struct
     // BEP-171: Security Enhancement for Cross-Chain Module
@@ -53,13 +53,13 @@ contract CrossChain is System, ICrossChain, IParamSubscriber {
         uint8 indexed channelId,
         bytes payload
     );
-    event receivedPackage(uint8 packageType, uint64 indexed packageSequence, uint8 indexed channelId);  // @dev deprecated
-    event unsupportedPackage(uint64 indexed packageSequence, uint8 indexed channelId, bytes payload);  // @dev deprecated
-    event unexpectedRevertInPackageHandler(address indexed contractAddr, string reason);  // @dev deprecated
-    event unexpectedFailureAssertionInPackageHandler(address indexed contractAddr, bytes lowLevelData);  // @dev deprecated
-    event paramChange(string key, bytes value);  // @dev deprecated
-    event enableOrDisableChannel(uint8 indexed channelId, bool isEnable);  // @dev deprecated
-    event addChannel(uint8 indexed channelId, address indexed contractAddr);  // @dev deprecated
+    event receivedPackage(uint8 packageType, uint64 indexed packageSequence, uint8 indexed channelId); // @dev deprecated
+    event unsupportedPackage(uint64 indexed packageSequence, uint8 indexed channelId, bytes payload); // @dev deprecated
+    event unexpectedRevertInPackageHandler(address indexed contractAddr, string reason); // @dev deprecated
+    event unexpectedFailureAssertionInPackageHandler(address indexed contractAddr, bytes lowLevelData); // @dev deprecated
+    event paramChange(string key, bytes value); // @dev deprecated
+    event enableOrDisableChannel(uint8 indexed channelId, bool isEnable); // @dev deprecated
+    event addChannel(uint8 indexed channelId, address indexed contractAddr); // @dev deprecated
 
     // BEP-171: Security Enhancement for Cross-Chain Module
     // @dev deprecated
@@ -70,9 +70,9 @@ contract CrossChain is System, ICrossChain, IParamSubscriber {
         uint128 expiredAt,
         bytes32 contentHash
     );
-    event Suspended(address indexed executor);  // @dev deprecated
-    event Reopened(address indexed executor);  // @dev deprecated
-    event SuccessChallenge(address indexed challenger, uint64 packageSequence, uint8 channelId);  // @dev deprecated
+    event Suspended(address indexed executor); // @dev deprecated
+    event Reopened(address indexed executor); // @dev deprecated
+    event SuccessChallenge(address indexed challenger, uint64 packageSequence, uint8 channelId); // @dev deprecated
 
     modifier sequenceInOrder(uint64 _sequence, uint8 _channelID) {
         uint64 expectedSequence = channelReceiveSequenceMap[_channelID];
@@ -82,17 +82,23 @@ contract CrossChain is System, ICrossChain, IParamSubscriber {
         _;
     }
 
-    modifier blockSynced(uint64 _height) {
+    modifier blockSynced(
+        uint64 _height
+    ) {
         require(ILightClient(LIGHT_CLIENT_ADDR).isHeaderSynced(_height), "light client not sync the block yet");
         _;
     }
 
-    modifier channelSupported(uint8 _channelID) {
+    modifier channelSupported(
+        uint8 _channelID
+    ) {
         require(channelHandlerContractMap[_channelID] != address(0x0), "channel is not supported");
         _;
     }
 
-    modifier onlyRegisteredContractChannel(uint8 channleId) {
+    modifier onlyRegisteredContractChannel(
+        uint8 channleId
+    ) {
         require(
             registeredContractChannelMap[msg.sender][channleId], "the contract and channel have not been registered"
         );

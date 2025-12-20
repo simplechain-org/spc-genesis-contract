@@ -65,7 +65,9 @@ contract ValidatorSetTest is Deployer {
         vm.mockCall(address(0x66), "", hex"01");
     }
 
-    function testDeposit(uint256 amount) public {
+    function testDeposit(
+        uint256 amount
+    ) public {
         vm.assume(amount >= 1e16);
         vm.assume(amount <= 1e19);
 
@@ -317,7 +319,7 @@ contract ValidatorSetTest is Deployer {
         // Create validators first
         (, address[] memory consensusAddrs, uint64[] memory votingPowers, bytes[] memory voteAddrs) =
             _batchCreateValidators(2);
-        
+
         vm.startPrank(coinbase);
         bscValidatorSet.updateValidatorSetV2(consensusAddrs, votingPowers, voteAddrs);
         vm.stopPrank();
@@ -335,14 +337,14 @@ contract ValidatorSetTest is Deployer {
         vm.prank(coinbase);
         vm.expectRevert("gasprice is not zero");
         bscValidatorSet.updateValidatorUptimeRecord(index, validator1, validator1);
-        
+
         // Reset gas price to zero
         vm.txGasPrice(0);
 
         // Test success case: in-turn validator (valAddr == inTurnValAddr)
         vm.prank(coinbase);
         bscValidatorSet.updateValidatorUptimeRecord(index, validator1, validator1);
-        
+
         (uint256 inTurnCount, uint256 outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index);
         assertEq(inTurnCount, 1, "in-turn count should be 1");
         assertEq(outTurnCount, 0, "out-turn count should be 0");
@@ -350,7 +352,7 @@ contract ValidatorSetTest is Deployer {
         // Test success case: out-of-turn validator (valAddr != inTurnValAddr)
         vm.prank(coinbase);
         bscValidatorSet.updateValidatorUptimeRecord(index, validator2, validator1);
-        
+
         (inTurnCount, outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index);
         assertEq(inTurnCount, 1, "in-turn count should still be 1");
         assertEq(outTurnCount, 1, "out-turn count should be 1");
@@ -358,7 +360,7 @@ contract ValidatorSetTest is Deployer {
         // Test multiple updates for same validator
         vm.prank(coinbase);
         bscValidatorSet.updateValidatorUptimeRecord(index, validator1, validator1);
-        
+
         (inTurnCount, outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index);
         assertEq(inTurnCount, 2, "in-turn count should be 2");
         assertEq(outTurnCount, 1, "out-turn count should still be 1");
@@ -367,18 +369,20 @@ contract ValidatorSetTest is Deployer {
         uint256 index2 = 2;
         vm.prank(coinbase);
         bscValidatorSet.updateValidatorUptimeRecord(index2, validator1, validator1);
-        
+
         (inTurnCount, outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index2);
         assertEq(inTurnCount, 1, "in-turn count for index2 should be 1");
         assertEq(outTurnCount, 0, "out-turn count for index2 should be 0");
-        
+
         // Verify original index is unchanged
         (inTurnCount, outTurnCount) = bscValidatorSet.getValidatorUptimeRecord(validator1, index);
         assertEq(inTurnCount, 2, "in-turn count for original index should still be 2");
         assertEq(outTurnCount, 1, "out-turn count for original index should still be 1");
     }
 
-    function _calcIncoming(uint256 value) internal view returns (uint256 incoming) {
+    function _calcIncoming(
+        uint256 value
+    ) internal view returns (uint256 incoming) {
         uint256 turnLength = bscValidatorSet.getTurnLength();
         uint256 systemRewardAntiMEVRatio = bscValidatorSet.systemRewardAntiMEVRatio();
         uint256 systemRewardRatio = systemRewardBaseRatio;

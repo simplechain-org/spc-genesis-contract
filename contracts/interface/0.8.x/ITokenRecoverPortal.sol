@@ -10,7 +10,9 @@ interface ITokenRecoverPortal {
     // Returns the address of the contract that is allowed to pause the recover.
     function assetProtector() external view returns (address);
     // Returns true if the index has been marked recovered.
-    function isRecovered(bytes32 index) external view returns (bool);
+    function isRecovered(
+        bytes32 index
+    ) external view returns (bool);
     // recover the given amount of the token to the given address. Reverts if the inputs are invalid.
     function recover(
         bytes32 tokenSymbol,

@@ -859,23 +859,22 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         return IStakeCredit(_validators[operatorAddress].creditContract).totalPooledBNBRecord(index);
     }
     /**
-    * @notice Get shares and pooled BNB of other delegators
-    */
-    function getValidatorDelegatedInfo(address operatorAddress) 
-        external 
-        view 
-        returns (uint256 totalPooled, uint256 selfDelegated,uint256 otherDelegated) 
-    {
+     * @notice Get shares and pooled BNB of other delegators
+     */
+
+    function getValidatorDelegatedInfo(
+        address operatorAddress
+    ) external view returns (uint256 totalPooled, uint256 selfDelegated, uint256 otherDelegated) {
         if (!_validatorSet.contains(operatorAddress)) revert ValidatorNotExisted();
-        
+
         IStakeCredit creditContract = IStakeCredit(_validators[operatorAddress].creditContract);
-        
+
         uint256 totalShares = creditContract.totalSupply();
         uint256 deadShares = creditContract.balanceOf(DEAD_ADDRESS);
         uint256 validatorShares = creditContract.balanceOf(operatorAddress);
-        
+
         uint256 otherShares = totalShares - deadShares - validatorShares;
-        
+
         totalPooled = creditContract.getPooledBNBByShares(totalShares);
         selfDelegated = creditContract.getPooledBNBByShares(validatorShares);
         otherDelegated = creditContract.getPooledBNBByShares(otherShares);

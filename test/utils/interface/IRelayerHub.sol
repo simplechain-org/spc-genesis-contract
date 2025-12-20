@@ -40,17 +40,27 @@ interface RelayerHub {
     function VALIDATOR_CONTRACT_ADDR() external view returns (address);
     function WHITELIST_1() external view returns (address);
     function WHITELIST_2() external view returns (address);
-    function acceptBeingRelayer(address manager) external;
+    function acceptBeingRelayer(
+        address manager
+    ) external;
     function alreadyInit() external view returns (bool);
     function bscChainID() external view returns (uint16);
     function init() external;
-    function isManager(address managerAddress) external view returns (bool);
-    function isProvisionalRelayer(address relayerAddress) external view returns (bool);
-    function isRelayer(address relayerAddress) external view returns (bool);
+    function isManager(
+        address managerAddress
+    ) external view returns (bool);
+    function isProvisionalRelayer(
+        address relayerAddress
+    ) external view returns (bool);
+    function isRelayer(
+        address relayerAddress
+    ) external view returns (bool);
     function removeManagerByHimself() external;
     function unregister() external;
     function updateParam(string memory key, bytes memory value) external;
-    function updateRelayer(address relayerToBeAdded) external;
+    function updateRelayer(
+        address relayerToBeAdded
+    ) external;
     function whitelistInit() external;
     function whitelistInitDone() external view returns (bool);
 }

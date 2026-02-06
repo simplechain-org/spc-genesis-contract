@@ -150,6 +150,8 @@ contract StakeHub is SystemV2, Initializable, Protectable {
     // where each NodeID is stored as a fixed 32-byte value.
     mapping(address => bytes32[]) private validatorNodeIDs;
 
+    bool public isDisableUndelegate;
+
     /*----------------- structs and events -----------------*/
     struct StakeMigrationPackage {
         address operatorAddress; // the operator address of the target validator to delegate to
@@ -650,6 +652,11 @@ contract StakeHub is SystemV2, Initializable, Protectable {
     function distributeReward(
         address consensusAddress
     ) external payable onlyValidatorContract {
+        if (isDisableUndelegate == false) {
+            unbondPeriod = 180 days;
+            isDisableUndelegate = true;
+        } 
+
         address operatorAddress = consensusToOperator[consensusAddress];
         Validator memory valInfo = _validators[operatorAddress];
         if (valInfo.creditContract == address(0) || valInfo.jailed) {

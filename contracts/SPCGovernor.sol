@@ -182,7 +182,7 @@ contract SPCGovernor is
         } else if (key.compareStrings("proposalThreshold")) {
             if (value.length != 32) revert InvalidValue(key, value);
             uint256 newProposalThreshold = value.bytesToUint256(32);
-            if (newProposalThreshold == 0 || newProposalThreshold > 250_000 ether) revert InvalidValue(key, value);
+            if (newProposalThreshold == 0 || newProposalThreshold > 250_000_000 ether) revert InvalidValue(key, value);
             _setProposalThreshold(newProposalThreshold);
         } else if (key.compareStrings("quorumNumerator")) {
             if (value.length != 32) revert InvalidValue(key, value);
@@ -203,6 +203,14 @@ contract SPCGovernor is
             revert UnknownParam(key, value);
         }
         emit ParamChange(key, value);
+    }
+
+    // allow validator set contract to adjust proposal threshold directly
+    function setProposalThresholdExternal(uint256 newProposalThreshold)
+        public
+        onlyValidatorContract
+    {
+        _setProposalThreshold(newProposalThreshold);
     }
 
     /*----------------- view functions -----------------*/

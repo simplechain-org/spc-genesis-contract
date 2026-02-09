@@ -29,4 +29,5 @@ interface IStakeHub {
     function distributeReward(
         address validator
     ) external payable;
+    function setUnbondPeriod(uint256 _unbondPeriod) external;
 }

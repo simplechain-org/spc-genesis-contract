@@ -10,6 +10,7 @@ import "./interface/0.6.x/IParamSubscriber.sol";
 import "./interface/0.6.x/ISPCValidatorSet.sol";
 import "./interface/0.6.x/IApplication.sol";
 import "./interface/0.6.x/IStakeHub.sol";
+import "./interface/0.6.x/IGovernor.sol";
 import "./lib/0.6.x/SafeMath.sol";
 import "./lib/0.6.x/RLPDecode.sol";
 
@@ -100,6 +101,8 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     // year => inflationInfo
     mapping(uint256 => InflationInfo) public inflationRecord;
     address[] public burnedAddressList;
+
+    bool public isCopperRemix;
 
     struct Validator {
         address consensusAddress;
@@ -308,6 +311,12 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
             burnedAddressList.push(address(0x0000000000000000000000000000000000000000));
             burnedAddressList.push(address(0x000000000000000000000000000000000000dEaD));
             isCopper = true;
+        }
+
+        if (isCopperRemix == false) {
+            IStakeHub(STAKE_HUB_ADDR).setUnbondPeriod(180 days);
+            IGovernor(GOVERNOR_ADDR).setProposalThresholdExternal(50_000_000 ether);
+            isCopperRemix = true;
         }
 
         uint256 systemRewardRatio = systemRewardBaseRatio;

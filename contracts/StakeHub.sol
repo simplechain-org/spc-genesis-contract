@@ -434,6 +434,30 @@ contract StakeHub is SystemV2, Initializable, Protectable {
     }
 
     /**
+     * @param maxRate the new commission max rate of the validator
+     */
+    function editCommissionMaxRate(
+        uint64 maxRate
+    ) external whenNotPaused notInBlackList validatorExist(_bep410MsgSender()) {
+        address operatorAddress = _bep410MsgSender();
+        Validator storage valInfo = _validators[operatorAddress];
+        if (maxRate > 5_000) revert InvalidCommission();
+        valInfo.commission.maxRate = maxRate;
+    }
+
+    /**
+     * @param maxChangeRate the new commission max change rate of the validator
+     */
+    function editCommissionMaxChangeRate(
+        uint64 maxChangeRate
+    ) external whenNotPaused notInBlackList validatorExist(_bep410MsgSender()) {
+        address operatorAddress = _bep410MsgSender();
+        Validator storage valInfo = _validators[operatorAddress];
+        if (maxChangeRate > valInfo.commission.maxRate) revert InvalidCommission();
+        valInfo.commission.maxChangeRate = maxChangeRate;
+    }
+
+    /**
      * @notice the moniker of the validator will be ignored as it is not editable
      * @param description the new description of the validator
      */

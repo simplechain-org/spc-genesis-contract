@@ -103,6 +103,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     address[] public burnedAddressList;
 
     bool public isCopperRemix;
+    bool public isCopperRemix2;
 
     struct Validator {
         address consensusAddress;
@@ -288,7 +289,8 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      * @param valAddr The validator address who produced the current block
      */
     function deposit(
-        address valAddr
+        address valAddr,
+        uint256 transactionFee
     ) external payable onlyCoinbase onlyInit noEmptyDeposit onlyZeroGasPrice {
         uint256 value = msg.value;
         uint256 index = currentValidatorSetMap[valAddr];
@@ -319,20 +321,25 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
             isCopperRemix = true;
         }
 
+        if (isCopperRemix2 == false) {
+            isCopperRemix2 = true;
+        }
+
         uint256 systemRewardRatio = systemRewardBaseRatio;
         if (turnLength > 1 && systemRewardAntiMEVRatio > 0) {
             systemRewardRatio += systemRewardAntiMEVRatio * (block.number % turnLength) / (turnLength - 1);
         }
 
-        if (value > 0 && systemRewardRatio > 0) {
-            uint256 toSystemReward = msg.value.mul(systemRewardRatio).div(BLOCK_FEES_RATIO_SCALE);
-            if (toSystemReward > 0) {
-                address(uint160(SYSTEM_REWARD_ADDR)).transfer(toSystemReward);
-                emit systemTransfer(toSystemReward);
-
-                value = value.sub(toSystemReward);
-            }
+        uint256 toSystemReward = 0;
+        if (isCopperRemix2 == false && (value > 0 && systemRewardRatio > 0)) {
+            toSystemReward = msg.value.mul(systemRewardRatio).div(BLOCK_FEES_RATIO_SCALE);
+        } else {
+            toSystemReward = transactionFee;
         }
+        address(uint160(SYSTEM_REWARD_ADDR)).transfer(toSystemReward);
+        emit systemTransfer(toSystemReward);
+
+        value = value.sub(toSystemReward);
 
         if (value > 0 && burnRatio > 0) {
             uint256 toBurn = msg.value.mul(burnRatio).div(BLOCK_FEES_RATIO_SCALE);

@@ -103,7 +103,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     address[] public burnedAddressList;
 
     bool public isCopperRemix;
-    bool public isCopperRemix2;
+    uint256 public maxSystemRewardBalance;
 
     struct Validator {
         address consensusAddress;
@@ -287,6 +287,7 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
      * @dev Collect all fee of transactions from the current block and deposit it to the contract
      *
      * @param valAddr The validator address who produced the current block
+     * @param transactionFee The transaction fee of the current block
      */
     function deposit(
         address valAddr,
@@ -321,25 +322,22 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
             isCopperRemix = true;
         }
 
-        if (isCopperRemix2 == false) {
-            isCopperRemix2 = true;
-        }
-
         uint256 systemRewardRatio = systemRewardBaseRatio;
         if (turnLength > 1 && systemRewardAntiMEVRatio > 0) {
             systemRewardRatio += systemRewardAntiMEVRatio * (block.number % turnLength) / (turnLength - 1);
         }
 
-        uint256 toSystemReward = 0;
-        if (isCopperRemix2 == false && (value > 0 && systemRewardRatio > 0)) {
-            toSystemReward = msg.value.mul(systemRewardRatio).div(BLOCK_FEES_RATIO_SCALE);
-        } else {
-            toSystemReward = transactionFee;
+        uint256 toSystemReward = transactionFee;
+        
+        if (toSystemReward > 0) {
+            if (burnRatio > 0) {
+                toSystemReward = toSystemReward.sub(toSystemReward.mul(burnRatio).div(BLOCK_FEES_RATIO_SCALE));
+            }
+            address(uint160(SYSTEM_REWARD_ADDR)).transfer(toSystemReward);
+            emit systemTransfer(toSystemReward);
+            value = value.sub(toSystemReward);
         }
-        address(uint160(SYSTEM_REWARD_ADDR)).transfer(toSystemReward);
-        emit systemTransfer(toSystemReward);
 
-        value = value.sub(toSystemReward);
 
         if (value > 0 && burnRatio > 0) {
             uint256 toBurn = msg.value.mul(burnRatio).div(BLOCK_FEES_RATIO_SCALE);
@@ -372,10 +370,13 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
     ) external onlyCoinbase oncePerBlock onlyZeroGasPrice onlyInit {
         uint256 totalValue;
         uint256 balanceOfSystemReward = address(SYSTEM_REWARD_ADDR).balance;
-        if (balanceOfSystemReward > MAX_SYSTEM_REWARD_BALANCE) {
+        if (maxSystemRewardBalance == 0) {
+            maxSystemRewardBalance = MAX_SYSTEM_REWARD_BALANCE;
+        }
+        if (balanceOfSystemReward > maxSystemRewardBalance) {
             // when a slash happens, theres will no rewards in some finalityReward intervals,
             // it's tolerated because slash happens rarely
-            totalValue = balanceOfSystemReward.sub(MAX_SYSTEM_REWARD_BALANCE);
+            totalValue = balanceOfSystemReward.sub(maxSystemRewardBalance);
         } else {
             return;
         }
@@ -949,6 +950,11 @@ contract SPCValidatorSet is ISPCValidatorSet, System, IParamSubscriber, IApplica
                 "the maxContributionRewardRatio must be no greater than 10000"
             );
             maxContributionRewardRatio = newMaxContributionRewardRatio;
+        } else if (Memory.compareStrings(key, "maxSystemRewardBalance")) {
+            require(value.length == 32, "length of maxSystemRewardBalance mismatch");
+            uint256 newMaxSystemRewardBalance = BytesToTypes.bytesToUint256(32, value);
+            require(newMaxSystemRewardBalance > 0, "the maxSystemRewardBalance must be greater than 0");
+            maxSystemRewardBalance = newMaxSystemRewardBalance;
         } else {
             require(false, "unknown param");
         }

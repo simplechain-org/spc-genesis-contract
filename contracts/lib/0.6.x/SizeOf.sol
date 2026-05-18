@@ -7,7 +7,9 @@ pragma solidity 0.6.4;
  * @author pouladzade@gmail.com
  */
 library SizeOf {
-    function sizeOfString(string memory _in) internal pure returns (uint256 _size) {
+    function sizeOfString(
+        string memory _in
+    ) internal pure returns (uint256 _size) {
         _size = bytes(_in).length / 32;
         if (bytes(_in).length % 32 != 0) {
             ++_size;
@@ -17,7 +19,9 @@ library SizeOf {
         _size *= 32;
     }
 
-    function sizeOfInt(uint16 _postfix) internal pure returns (uint256 size) {
+    function sizeOfInt(
+        uint16 _postfix
+    ) internal pure returns (uint256 size) {
         assembly {
             switch _postfix
             case 8 { size := 1 }
@@ -56,7 +60,9 @@ library SizeOf {
         }
     }
 
-    function sizeOfUint(uint16 _postfix) internal pure returns (uint256 size) {
+    function sizeOfUint(
+        uint16 _postfix
+    ) internal pure returns (uint256 size) {
         return sizeOfInt(_postfix);
     }
 

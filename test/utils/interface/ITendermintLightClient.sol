@@ -38,14 +38,22 @@ interface TendermintLightClient {
     function alreadyInit() external view returns (bool);
     function bscChainID() external view returns (uint16);
     function chainID() external view returns (bytes32);
-    function getAppHash(uint64 height) external view returns (bytes32);
+    function getAppHash(
+        uint64 height
+    ) external view returns (bytes32);
     function getChainID() external view returns (string memory);
-    function getSubmitter(uint64 height) external view returns (address payable);
+    function getSubmitter(
+        uint64 height
+    ) external view returns (address payable);
     function init() external;
     function initialHeight() external view returns (uint64);
-    function isHeaderSynced(uint64 height) external view returns (bool);
+    function isHeaderSynced(
+        uint64 height
+    ) external view returns (bool);
     function latestHeight() external view returns (uint64);
-    function lightClientConsensusStates(uint64)
+    function lightClientConsensusStates(
+        uint64
+    )
         external
         view
         returns (
@@ -55,7 +63,9 @@ interface TendermintLightClient {
             bytes memory nextValidatorSet
         );
     function rewardForValidatorSetChange() external view returns (uint256);
-    function submitters(uint64) external view returns (address payable);
+    function submitters(
+        uint64
+    ) external view returns (address payable);
     function syncTendermintHeader(bytes memory header, uint64 height) external returns (bool);
     function updateParam(string memory key, bytes memory value) external;
 }

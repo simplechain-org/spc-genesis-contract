@@ -3,7 +3,7 @@ pragma solidity 0.6.4;
 import "../lib/0.6.x/RLPDecode.sol";
 import "../lib/0.6.x/Memory.sol";
 
-contract BSCValidatorSetTool {
+contract SPCValidatorSetTool {
     bytes public constant INIT_VALIDATORSET_BYTES =
         hex"f84580f842f840949fb29aac15b9a4b7f17c3385939b007540f4d791949fb29aac15b9a4b7f17c3385939b007540f4d791949fb29aac15b9a4b7f17c3385939b007540f4d79164";
 
@@ -26,7 +26,9 @@ contract BSCValidatorSetTool {
         require(valid, "failed to init");
     }
 
-    function decodeValidatorSetSynPackage(bytes memory msgBytes) internal pure returns (bool) {
+    function decodeValidatorSetSynPackage(
+        bytes memory msgBytes
+    ) internal pure returns (bool) {
         IbcValidatorSetPackage memory validatorSetPkg;
 
         RLPDecode.Iterator memory iter = msgBytes.toRLPItem().iterator();
@@ -54,7 +56,9 @@ contract BSCValidatorSetTool {
         return success;
     }
 
-    function decodeValidator(RLPDecode.RLPItem memory itemValidator) internal pure returns (Validator memory, bool) {
+    function decodeValidator(
+        RLPDecode.RLPItem memory itemValidator
+    ) internal pure returns (Validator memory, bool) {
         Validator memory validator;
         RLPDecode.Iterator memory iter = itemValidator.iterator();
         bool success = false;
@@ -79,7 +83,9 @@ contract BSCValidatorSetTool {
 
     // | type   | relayFee   |package  |
     // | 1 byte | 32 bytes   | bytes    |
-    function decodePayloadHeader(bytes memory payload) public pure returns (bool, uint8, uint256, bytes memory) {
+    function decodePayloadHeader(
+        bytes memory payload
+    ) public pure returns (bool, uint8, uint256, bytes memory) {
         if (payload.length < 33) {
             return (false, 0, 0, new bytes(0));
         }

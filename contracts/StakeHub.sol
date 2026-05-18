@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 import "./SystemV2.sol";
 import "./extension/Protectable.sol";
-import "./interface/0.8.x/IBSCValidatorSet.sol";
+import "./interface/0.8.x/ISPCValidatorSet.sol";
 import "./interface/0.8.x/IGovToken.sol";
 import "./interface/0.8.x/IStakeCredit.sol";
 import "./lib/0.8.x/Utils.sol";
@@ -263,7 +263,7 @@ contract StakeHub is SystemV2, Initializable, Protectable {
     }
 
     /**
-     * @dev this function is invoked by BSC Parlia consensus engine during the hard fork
+     * @dev this function is invoked by SPC Parlia consensus engine during the hard fork
      */
     function initialize() external initializer onlyCoinbase onlyZeroGasPrice {
         transferGasLimit = 5000;
@@ -431,6 +431,30 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         valInfo.updateTime = block.timestamp;
 
         emit CommissionRateEdited(operatorAddress, commissionRate);
+    }
+
+    /**
+     * @param maxRate the new commission max rate of the validator
+     */
+    function editCommissionMaxRate(
+        uint64 maxRate
+    ) external whenNotPaused notInBlackList validatorExist(_bep410MsgSender()) {
+        address operatorAddress = _bep410MsgSender();
+        Validator storage valInfo = _validators[operatorAddress];
+        if (maxRate > 5_000) revert InvalidCommission();
+        valInfo.commission.maxRate = maxRate;
+    }
+
+    /**
+     * @param maxChangeRate the new commission max change rate of the validator
+     */
+    function editCommissionMaxChangeRate(
+        uint64 maxChangeRate
+    ) external whenNotPaused notInBlackList validatorExist(_bep410MsgSender()) {
+        address operatorAddress = _bep410MsgSender();
+        Validator storage valInfo = _validators[operatorAddress];
+        if (maxChangeRate > valInfo.commission.maxRate) revert InvalidCommission();
+        valInfo.commission.maxChangeRate = maxChangeRate;
     }
 
     /**
@@ -858,6 +882,27 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         if (!_validatorSet.contains(operatorAddress)) revert ValidatorNotExisted();
         return IStakeCredit(_validators[operatorAddress].creditContract).totalPooledBNBRecord(index);
     }
+    /**
+     * @notice Get shares and pooled BNB of other delegators
+     */
+
+    function getValidatorDelegatedInfo(
+        address operatorAddress
+    ) external view returns (uint256 totalPooled, uint256 selfDelegated, uint256 otherDelegated) {
+        if (!_validatorSet.contains(operatorAddress)) revert ValidatorNotExisted();
+
+        IStakeCredit creditContract = IStakeCredit(_validators[operatorAddress].creditContract);
+
+        uint256 totalShares = creditContract.totalSupply();
+        uint256 deadShares = creditContract.balanceOf(DEAD_ADDRESS);
+        uint256 validatorShares = creditContract.balanceOf(operatorAddress);
+
+        uint256 otherShares = totalShares - deadShares - validatorShares;
+
+        totalPooled = creditContract.getPooledBNBByShares(totalShares);
+        selfDelegated = creditContract.getPooledBNBByShares(validatorShares);
+        otherDelegated = creditContract.getPooledBNBByShares(otherShares);
+    }
 
     /**
      * @notice pagination query all validators' operator address and credit contract address
@@ -886,6 +931,16 @@ contract StakeHub is SystemV2, Initializable, Protectable {
             operatorAddrs[i] = _validatorSet.at(offset + i);
             creditAddrs[i] = _validators[operatorAddrs[i]].creditContract;
         }
+    }
+
+    function getValidatorsTotalPooled() external view returns (uint256) {
+        uint256 totalAmount = 0;
+        for (uint256 i; i < _validatorSet.length(); ++i) {
+            address operatorAddr = _validatorSet.at(i);
+            address creditAddr = _validators[operatorAddr].creditContract;
+            totalAmount += IStakeCredit(creditAddr).totalPooledBNB();
+        }
+        return totalAmount;
     }
 
     /**
@@ -1150,6 +1205,10 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         return (consensusAddresses, nodeIDsList);
     }
 
+    function setUnbondPeriod(uint256 newUnbondPeriod) external onlyValidatorContract {
+        unbondPeriod = newUnbondPeriod;
+    }
+
     /*----------------- internal functions -----------------*/
     function _checkMoniker(
         string memory moniker
@@ -1230,7 +1289,7 @@ contract StakeHub is SystemV2, Initializable, Protectable {
         }
         if (IStakeCredit(valInfo.creditContract).getPooledBNB(operatorAddress) < minSelfDelegationBNB) {
             _jailValidator(valInfo, block.timestamp + downtimeJailTime);
-            IBSCValidatorSet(VALIDATOR_CONTRACT_ADDR).felony(valInfo.consensusAddress);
+            ISPCValidatorSet(VALIDATOR_CONTRACT_ADDR).felony(valInfo.consensusAddress);
         }
     }
 

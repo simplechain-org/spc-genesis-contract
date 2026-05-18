@@ -1,4 +1,4 @@
-forge flatten contracts/BSCValidatorSet.sol >contracts/flattened/BSCValidatorSet.sol
+forge flatten contracts/SPCValidatorSet.sol >contracts/flattened/SPCValidatorSet.sol
 forge flatten contracts/GovHub.sol >contracts/flattened/GovHub.sol
 forge flatten contracts/RelayerHub.sol >contracts/flattened/RelayerHub.sol
 forge flatten contracts/RelayerIncentivize.sol >contracts/flattened/RelayerIncentivize.sol

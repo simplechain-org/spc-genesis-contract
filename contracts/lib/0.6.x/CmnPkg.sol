@@ -11,13 +11,17 @@ library CmnPkg {
         uint32 code;
     }
 
-    function encodeCommonAckPackage(uint32 code) internal pure returns (bytes memory) {
+    function encodeCommonAckPackage(
+        uint32 code
+    ) internal pure returns (bytes memory) {
         bytes[] memory elements = new bytes[](1);
         elements[0] = uint256(code).encodeUint();
         return elements.encodeList();
     }
 
-    function decodeCommonAckPackage(bytes memory msgBytes) internal pure returns (CommonAckPackage memory, bool) {
+    function decodeCommonAckPackage(
+        bytes memory msgBytes
+    ) internal pure returns (CommonAckPackage memory, bool) {
         CommonAckPackage memory ackPkg;
         RLPDecode.Iterator memory iter = msgBytes.toRLPItem().iterator();
 

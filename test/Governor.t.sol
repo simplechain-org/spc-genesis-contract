@@ -5,11 +5,17 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./utils/Deployer.sol";
 
 interface IStakeCredit {
-    function balanceOf(address account) external view returns (uint256);
+    function balanceOf(
+        address account
+    ) external view returns (uint256);
     function totalPooledBNB() external view returns (uint256);
     function totalSupply() external view returns (uint256);
-    function getPooledBNBByShares(uint256 shares) external view returns (uint256);
-    function getSharesByPooledBNB(uint256 bnbAmount) external view returns (uint256);
+    function getPooledBNBByShares(
+        uint256 shares
+    ) external view returns (uint256);
+    function getSharesByPooledBNB(
+        uint256 bnbAmount
+    ) external view returns (uint256);
 }
 
 contract GovernorTest is Deployer {

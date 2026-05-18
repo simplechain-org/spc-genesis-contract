@@ -13,7 +13,9 @@ library RLPEncode {
      * @param self The string (ie. byte array) item to encode
      * @return The RLP encoded string in bytes
      */
-    function encodeBytes(bytes memory self) internal pure returns (bytes memory) {
+    function encodeBytes(
+        bytes memory self
+    ) internal pure returns (bytes memory) {
         if (self.length == 1 && self[0] <= 0x7f) {
             return self;
         }
@@ -25,7 +27,9 @@ library RLPEncode {
      * @param self The address to encode
      * @return The RLP encoded address in bytes
      */
-    function encodeAddress(address self) internal pure returns (bytes memory) {
+    function encodeAddress(
+        address self
+    ) internal pure returns (bytes memory) {
         bytes memory b;
         assembly {
             b := mload(0x40)
@@ -41,7 +45,9 @@ library RLPEncode {
      * @param self The uint to encode
      * @return The RLP encoded uint in bytes
      */
-    function encodeUint(uint256 self) internal pure returns (bytes memory) {
+    function encodeUint(
+        uint256 self
+    ) internal pure returns (bytes memory) {
         return encodeBytes(toBinary(self));
     }
 
@@ -50,7 +56,9 @@ library RLPEncode {
      * @param self The int to encode
      * @return The RLP encoded int in bytes
      */
-    function encodeInt(int256 self) internal pure returns (bytes memory) {
+    function encodeInt(
+        int256 self
+    ) internal pure returns (bytes memory) {
         return encodeUint(uint256(self));
     }
 
@@ -59,7 +67,9 @@ library RLPEncode {
      * @param self The bool to encode
      * @return The RLP encoded bool in bytes
      */
-    function encodeBool(bool self) internal pure returns (bytes memory) {
+    function encodeBool(
+        bool self
+    ) internal pure returns (bytes memory) {
         bytes memory rs = new bytes(1);
         rs[0] = (self ? bytes1(0x01) : bytes1(0x80));
         return rs;
@@ -70,7 +80,9 @@ library RLPEncode {
      * @param self The list of items to encode, each item in list must be already encoded
      * @return The RLP encoded list of items in bytes
      */
-    function encodeList(bytes[] memory self) internal pure returns (bytes memory) {
+    function encodeList(
+        bytes[] memory self
+    ) internal pure returns (bytes memory) {
         if (self.length == 0) {
             return new bytes(0);
         }
@@ -180,7 +192,9 @@ library RLPEncode {
      * @param x The integer to encode
      * @return RLP encoded bytes
      */
-    function toBinary(uint256 x) internal pure returns (bytes memory) {
+    function toBinary(
+        uint256 x
+    ) internal pure returns (bytes memory) {
         bytes memory b = new bytes(32);
         assembly {
             mstore(add(b, 32), x)

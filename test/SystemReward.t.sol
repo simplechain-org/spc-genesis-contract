@@ -8,7 +8,9 @@ contract SystemRewardTest is Deployer {
 
     function setUp() public { }
 
-    function testReceive(uint256 amount) public {
+    function testReceive(
+        uint256 amount
+    ) public {
         vm.assume(amount < 1e20);
         uint256 balance = address(systemReward).balance;
 

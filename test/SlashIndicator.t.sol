@@ -342,7 +342,9 @@ contract SlashIndicatorTest is Deployer {
         slashIndicator.submitFinalityViolationEvidence(evidence);
     }
 
-    function _calcIncoming(uint256 value) internal view returns (uint256 incoming) {
+    function _calcIncoming(
+        uint256 value
+    ) internal view returns (uint256 incoming) {
         uint256 turnLength = bscValidatorSet.getTurnLength();
         uint256 systemRewardAntiMEVRatio = bscValidatorSet.systemRewardAntiMEVRatio();
         uint256 systemRewardRatio = systemRewardBaseRatio;

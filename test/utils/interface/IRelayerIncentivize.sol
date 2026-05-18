@@ -51,23 +51,39 @@ interface RelayerIncentivize {
     ) external returns (bool);
     function alreadyInit() external view returns (bool);
     function bscChainID() external view returns (uint16);
-    function calculateHeaderRelayerWeight(uint256 count) external pure returns (uint256);
-    function calculateTransferRelayerWeight(uint256 count) external pure returns (uint256);
+    function calculateHeaderRelayerWeight(
+        uint256 count
+    ) external pure returns (uint256);
+    function calculateTransferRelayerWeight(
+        uint256 count
+    ) external pure returns (uint256);
     function callerCompensationDenominator() external view returns (uint256);
     function callerCompensationMolecule() external view returns (uint256);
-    function claimRelayerReward(address relayerAddr) external;
+    function claimRelayerReward(
+        address relayerAddr
+    ) external;
     function collectedRewardForHeaderRelayer() external view returns (uint256);
     function collectedRewardForTransferRelayer() external view returns (uint256);
     function countInRound() external view returns (uint256);
     function dynamicExtraIncentiveAmount() external view returns (uint256);
-    function headerRelayerAddressRecord(uint256) external view returns (address payable);
+    function headerRelayerAddressRecord(
+        uint256
+    ) external view returns (address payable);
     function headerRelayerRewardRateDenominator() external view returns (uint256);
     function headerRelayerRewardRateMolecule() external view returns (uint256);
-    function headerRelayersSubmitCount(address) external view returns (uint256);
+    function headerRelayersSubmitCount(
+        address
+    ) external view returns (uint256);
     function init() external;
-    function packageRelayerAddressRecord(uint256) external view returns (address payable);
-    function packageRelayersSubmitCount(address) external view returns (uint256);
-    function relayerRewardVault(address) external view returns (uint256);
+    function packageRelayerAddressRecord(
+        uint256
+    ) external view returns (address payable);
+    function packageRelayersSubmitCount(
+        address
+    ) external view returns (uint256);
+    function relayerRewardVault(
+        address
+    ) external view returns (uint256);
     function roundSequence() external view returns (uint256);
     function updateParam(string memory key, bytes memory value) external;
 }

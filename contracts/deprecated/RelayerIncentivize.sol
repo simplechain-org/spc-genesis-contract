@@ -21,28 +21,28 @@ contract RelayerIncentivize is IRelayerIncentivize, System, IParamSubscriber {
     uint256 public callerCompensationMolecule;
     uint256 public callerCompensationDenominator;
 
-    mapping(address => uint256) public headerRelayersSubmitCount;  // @dev deprecated
-    address payable[] public headerRelayerAddressRecord;  // @dev deprecated
+    mapping(address => uint256) public headerRelayersSubmitCount; // @dev deprecated
+    address payable[] public headerRelayerAddressRecord; // @dev deprecated
 
-    mapping(address => uint256) public packageRelayersSubmitCount;  // @dev deprecated
-    address payable[] public packageRelayerAddressRecord;  // @dev deprecated
+    mapping(address => uint256) public packageRelayersSubmitCount; // @dev deprecated
+    address payable[] public packageRelayerAddressRecord; // @dev deprecated
 
-    uint256 public collectedRewardForHeaderRelayer = 0;  // @dev deprecated
-    uint256 public collectedRewardForTransferRelayer = 0;  // @dev deprecated
+    uint256 public collectedRewardForHeaderRelayer = 0; // @dev deprecated
+    uint256 public collectedRewardForTransferRelayer = 0; // @dev deprecated
 
-    uint256 public roundSequence = 0;  // @dev deprecated
-    uint256 public countInRound = 0;  // @dev deprecated
+    uint256 public roundSequence = 0; // @dev deprecated
+    uint256 public countInRound = 0; // @dev deprecated
 
     mapping(address => uint256) public relayerRewardVault;
 
-    uint256 public dynamicExtraIncentiveAmount;  // @dev deprecated
+    uint256 public dynamicExtraIncentiveAmount; // @dev deprecated
 
     event rewardToRelayer(address relayer, uint256 amount);
 
     event distributeCollectedReward(
         uint256 sequence, uint256 roundRewardForHeaderRelayer, uint256 roundRewardForTransferRelayer
-    );  // @dev deprecated
-    event paramChange(string key, bytes value);  // @dev deprecated
+    ); // @dev deprecated
+    event paramChange(string key, bytes value); // @dev deprecated
 
     function init() external onlyNotInit {
         require(!alreadyInit, "already initialized");

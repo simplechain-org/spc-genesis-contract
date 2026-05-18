@@ -30,7 +30,9 @@ contract XYZToken is Context, ITestToken, Ownable {
      *
      * - `newName` new name
      */
-    function setName(string calldata newName) external {
+    function setName(
+        string calldata newName
+    ) external {
         _name = newName;
     }
 
@@ -39,7 +41,9 @@ contract XYZToken is Context, ITestToken, Ownable {
      *
      * - `newDecimals` new decimals
      */
-    function setDecimals(uint8 newDecimals) external {
+    function setDecimals(
+        uint8 newDecimals
+    ) external {
         _decimals = newDecimals;
     }
 
@@ -48,7 +52,9 @@ contract XYZToken is Context, ITestToken, Ownable {
      *
      * - `newTotalSupply` new totalSupply
      */
-    function setTotalSupply(uint256 newTotalSupply) external {
+    function setTotalSupply(
+        uint256 newTotalSupply
+    ) external {
         _totalSupply = newTotalSupply;
     }
 
@@ -57,7 +63,9 @@ contract XYZToken is Context, ITestToken, Ownable {
      *
      * - `newSymbol` new symbol
      */
-    function setSymbol(string calldata newSymbol) external {
+    function setSymbol(
+        string calldata newSymbol
+    ) external {
         _symbol = newSymbol;
     }
 
@@ -99,7 +107,9 @@ contract XYZToken is Context, ITestToken, Ownable {
     /**
      * @dev See {BEP20-balanceOf}.
      */
-    function balanceOf(address account) external view returns (uint256) {
+    function balanceOf(
+        address account
+    ) external view returns (uint256) {
         return _balances[account];
     }
 
@@ -198,7 +208,9 @@ contract XYZToken is Context, ITestToken, Ownable {
      *
      * - `msg.sender` must be the token owner
      */
-    function mint(uint256 amount) public onlyOwner returns (bool) {
+    function mint(
+        uint256 amount
+    ) public onlyOwner returns (bool) {
         _mint(_msgSender(), amount);
         return true;
     }

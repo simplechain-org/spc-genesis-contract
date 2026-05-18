@@ -63,7 +63,9 @@ interface TokenManager {
     function VALIDATOR_CONTRACT_ADDR() external view returns (address);
     function alreadyInit() external view returns (bool);
     function approveBind(address contractAddr, string memory bep2Symbol) external payable returns (bool);
-    function bindPackageRecord(bytes32)
+    function bindPackageRecord(
+        bytes32
+    )
         external
         view
         returns (
@@ -75,16 +77,24 @@ interface TokenManager {
             uint8 bep20Decimals,
             uint64 expireTime
         );
-    function boundByMirror(address) external view returns (bool);
+    function boundByMirror(
+        address
+    ) external view returns (bool);
     function bscChainID() external view returns (uint16);
-    function expireBind(string memory bep2Symbol) external payable returns (bool);
+    function expireBind(
+        string memory bep2Symbol
+    ) external payable returns (bool);
     function handleAckPackage(uint8 channelId, bytes memory msgBytes) external;
     function handleFailAckPackage(uint8 channelId, bytes memory msgBytes) external;
     function handleSynPackage(uint8 channelId, bytes memory msgBytes) external returns (bytes memory);
     function mirror(address bep20Addr, uint64 expireTime) external payable returns (bool);
     function mirrorFee() external view returns (uint256);
-    function mirrorPendingRecord(address) external view returns (bool);
-    function queryRequiredLockAmountForBind(string memory symbol) external view returns (uint256);
+    function mirrorPendingRecord(
+        address
+    ) external view returns (bool);
+    function queryRequiredLockAmountForBind(
+        string memory symbol
+    ) external view returns (uint256);
     function rejectBind(address contractAddr, string memory bep2Symbol) external payable returns (bool);
     function sync(address bep20Addr, uint64 expireTime) external payable returns (bool);
     function syncFee() external view returns (uint256);

@@ -196,7 +196,11 @@ contract StakeCredit is SystemV2, Initializable, ReentrancyGuardUpgradeable, ERC
         totalPooledBNB += _reward;
 
         // mint commission to the validator
-        _mintAndSync(validator, _commission);
+        // should not use _mintAndSync here because it will update totalPooledBNB
+        //_mintAndSync(validator, _commission);
+        uint256 shares = getSharesByPooledBNB(_commission);
+        _mint(validator, shares);
+
 
         emit RewardReceived(_reward, _commission);
     }

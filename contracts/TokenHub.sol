@@ -36,11 +36,11 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
 
     // BEP-171: Security Enhancement for Cross-Chain Module
     // the lock period for large cross-chain transfer
-    uint256 public lockPeriod;  // @dev deprecated
+    uint256 public lockPeriod; // @dev deprecated
     // the lock Period for token recover
     uint256 public constant LOCK_PERIOD_FOR_TOKEN_RECOVER = 7 days;
     // token address => largeTransferLimit amount, address(0) means BNB
-    mapping(address => uint256) public largeTransferLimitMap;  // @dev deprecated
+    mapping(address => uint256) public largeTransferLimitMap; // @dev deprecated
     // token address => recipient address => lockedAmount + unlockAt, address(0) means BNB
     mapping(address => mapping(address => LockInfo)) public lockInfoMap;
     uint8 internal reentryLock;
@@ -49,15 +49,15 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
     event receiveDeposit(address from, uint256 amount);
     event WithdrawUnlockedToken(address indexed tokenAddr, address indexed recipient, uint256 amount);
 
-    event transferInSuccess(address bep20Addr, address refundAddr, uint256 amount);  // @dev deprecated
-    event transferOutSuccess(address bep20Addr, address senderAddr, uint256 amount, uint256 relayFee);  // @dev deprecated
-    event refundSuccess(address bep20Addr, address refundAddr, uint256 amount, uint32 status);  // @dev deprecated
-    event refundFailure(address bep20Addr, address refundAddr, uint256 amount, uint32 status);  // @dev deprecated
-    event unexpectedPackage(uint8 channelId, bytes msgBytes);  // @dev deprecated
-    event paramChange(string key, bytes value);  // @dev deprecated
-    event LargeTransferLocked(address indexed tokenAddr, address indexed recipient, uint256 amount, uint256 unlockAt);  // @dev deprecated
-    event CancelTransfer(address indexed tokenAddr, address indexed attacker, uint256 amount);  // @dev deprecated
-    event LargeTransferLimitSet(address indexed tokenAddr, address indexed owner, uint256 largeTransferLimit);  // @dev deprecated
+    event transferInSuccess(address bep20Addr, address refundAddr, uint256 amount); // @dev deprecated
+    event transferOutSuccess(address bep20Addr, address senderAddr, uint256 amount, uint256 relayFee); // @dev deprecated
+    event refundSuccess(address bep20Addr, address refundAddr, uint256 amount, uint32 status); // @dev deprecated
+    event refundFailure(address bep20Addr, address refundAddr, uint256 amount, uint32 status); // @dev deprecated
+    event unexpectedPackage(uint8 channelId, bytes msgBytes); // @dev deprecated
+    event paramChange(string key, bytes value); // @dev deprecated
+    event LargeTransferLocked(address indexed tokenAddr, address indexed recipient, uint256 amount, uint256 unlockAt); // @dev deprecated
+    event CancelTransfer(address indexed tokenAddr, address indexed attacker, uint256 amount); // @dev deprecated
+    event LargeTransferLimitSet(address indexed tokenAddr, address indexed owner, uint256 largeTransferLimit); // @dev deprecated
 
     // BEP-299: Token Migration after BC Fusion
     event TokenRecoverLocked(
@@ -73,7 +73,9 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
     event NotBoundToken(bytes32 indexed tokenSymbol, address indexed recipient, uint256 amount);
 
     // BEP-171: Security Enhancement for Cross-Chain Module
-    modifier onlyTokenOwner(address bep20Token) {
+    modifier onlyTokenOwner(
+        address bep20Token
+    ) {
         require(msg.sender == IBEP20(bep20Token).getOwner(), "not owner of BEP20 token");
         _;
     }
@@ -110,7 +112,9 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
         revert("deprecated");
     }
 
-    function claimMigrationFund(uint256 amount) external onlyStakeHub returns (bool) {
+    function claimMigrationFund(
+        uint256 amount
+    ) external onlyStakeHub returns (bool) {
         revert("deprecated");
     }
 
@@ -133,7 +137,7 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
 
     /**
      * @dev handle ack cross-chain package from BC，it means cross-chain transfer successfully to BC
-     * and will refund the remaining token caused by different decimals between BSC and BC.
+     * and will refund the remaining token caused by different decimals between SPC and BC.
      *
      * @param channelId The channel for cross-chain communication
      * @param msgBytes The rlp encoded message bytes sent from BC
@@ -192,10 +196,10 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
     }
 
     /**
-     * @dev request a BC token recover from BSC
+     * @dev request a BC token recover from SPC
      *
-     * @param tokenSymbol The token symbol on BSC.
-     * @param recipient The destination address of the transfer on BSC.
+     * @param tokenSymbol The token symbol on SPC.
+     * @param recipient The destination address of the transfer on SPC.
      * @param amount The amount to transfer
      */
     function recoverBCAsset(
@@ -219,7 +223,7 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
             require(IBEP20(contractAddr).balanceOf(address(this)) >= convertedAmount, "insufficient balance");
             _lockRecoverToken(tokenSymbol, contractAddr, convertedAmount, recipient);
         } else {
-            convertedAmount = amount.mul(TEN_DECIMALS); // native bnb decimals is 8 on BC, while the native bnb decimals on BSC is 18
+            convertedAmount = amount.mul(TEN_DECIMALS); // native bnb decimals is 8 on BC, while the native bnb decimals on SPC is 18
             require(address(this).balance >= convertedAmount, "insufficient balance");
             address contractAddr = address(0x00);
             _lockRecoverToken(tokenSymbol, contractAddr, convertedAmount, recipient);
@@ -251,7 +255,7 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
     }
 
     /**
-     * @dev request a cross-chain transfer from BSC to BC
+     * @dev request a cross-chain transfer from SPC to BC
      * @notice this function is deprecated after Feynman upgrade
      *
      * @param contractAddr The token contract which is transferred
@@ -269,7 +273,7 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
     }
 
     /**
-     * @dev request a batch cross-chain BNB transfers from BSC to BC
+     * @dev request a batch cross-chain BNB transfers from SPC to BC
      *
      * @param recipientAddrs The destination address of the cross-chain transfer on BC.
      * @param amounts The amounts to transfer
@@ -289,11 +293,15 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
         revert("deprecated");
     }
 
-    function getContractAddrByBEP2Symbol(bytes32 bep2Symbol) external view override returns (address) {
+    function getContractAddrByBEP2Symbol(
+        bytes32 bep2Symbol
+    ) external view override returns (address) {
         return bep2SymbolToContractAddr[bep2Symbol];
     }
 
-    function getBep2SymbolByContractAddr(address contractAddr) external view override returns (bytes32) {
+    function getBep2SymbolByContractAddr(
+        address contractAddr
+    ) external view override returns (bytes32) {
         return contractAddrToBEP2Symbol[contractAddr];
     }
 
@@ -312,7 +320,9 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
         return amount.div(10 ** (BEP2_TOKEN_DECIMALS - bep20TokenDecimals));
     }
 
-    function getBoundContract(string memory bep2Symbol) public view returns (address) {
+    function getBoundContract(
+        string memory bep2Symbol
+    ) public view returns (address) {
         bytes32 bep2TokenSymbol;
         assembly {
             bep2TokenSymbol := mload(add(bep2Symbol, 32))
@@ -320,7 +330,9 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
         return bep2SymbolToContractAddr[bep2TokenSymbol];
     }
 
-    function getBoundBep2Symbol(address contractAddr) public view returns (string memory) {
+    function getBoundBep2Symbol(
+        address contractAddr
+    ) public view returns (string memory) {
         bytes32 bep2SymbolBytes32 = contractAddrToBEP2Symbol[contractAddr];
         bytes memory bep2SymbolBytes = new bytes(32);
         assembly {
@@ -341,7 +353,9 @@ contract TokenHub is ITokenHub, System, IParamSubscriber, IApplication, ISystemR
         return string(bep2Symbol);
     }
 
-    function withdrawStakingBNB(uint256 amount) external override returns (bool) {
+    function withdrawStakingBNB(
+        uint256 amount
+    ) external override returns (bool) {
         revert("deprecated");
     }
 }

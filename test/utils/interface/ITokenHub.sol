@@ -81,23 +81,37 @@ interface TokenHub {
         address[] memory refundAddrs,
         uint64 expireTime
     ) external payable returns (bool);
-    function bep20ContractDecimals(address) external view returns (uint256);
+    function bep20ContractDecimals(
+        address
+    ) external view returns (uint256);
     function bindToken(bytes32 bep2Symbol, address contractAddr, uint256 decimals) external;
     function bscChainID() external view returns (uint16);
     function cancelTokenRecoverLock(bytes32 tokenSymbol, address attacker) external;
     function cancelTransferIn(address tokenAddress, address attacker) external;
-    function claimMigrationFund(uint256 amount) external returns (bool);
+    function claimMigrationFund(
+        uint256 amount
+    ) external returns (bool);
     function claimRewards(address payable to, uint256 amount) external returns (uint256);
-    function getBep2SymbolByContractAddr(address contractAddr) external view returns (bytes32);
-    function getBoundBep2Symbol(address contractAddr) external view returns (string memory);
-    function getBoundContract(string memory bep2Symbol) external view returns (address);
-    function getContractAddrByBEP2Symbol(bytes32 bep2Symbol) external view returns (address);
+    function getBep2SymbolByContractAddr(
+        address contractAddr
+    ) external view returns (bytes32);
+    function getBoundBep2Symbol(
+        address contractAddr
+    ) external view returns (string memory);
+    function getBoundContract(
+        string memory bep2Symbol
+    ) external view returns (address);
+    function getContractAddrByBEP2Symbol(
+        bytes32 bep2Symbol
+    ) external view returns (address);
     function getMiniRelayFee() external view returns (uint256);
     function handleAckPackage(uint8 channelId, bytes memory msgBytes) external;
     function handleFailAckPackage(uint8 channelId, bytes memory msgBytes) external;
     function handleSynPackage(uint8 channelId, bytes memory msgBytes) external returns (bytes memory);
     function init() external;
-    function largeTransferLimitMap(address) external view returns (uint256);
+    function largeTransferLimitMap(
+        address
+    ) external view returns (uint256);
     function lockInfoMap(address, address) external view returns (uint256 amount, uint256 unlockAt);
     function lockPeriod() external view returns (uint256);
     function recoverBCAsset(bytes32 tokenSymbol, address recipient, uint256 amount) external;
@@ -111,6 +125,8 @@ interface TokenHub {
     ) external payable returns (bool);
     function unbindToken(bytes32 bep2Symbol, address contractAddr) external;
     function updateParam(string memory key, bytes memory value) external;
-    function withdrawStakingBNB(uint256 amount) external returns (bool);
+    function withdrawStakingBNB(
+        uint256 amount
+    ) external returns (bool);
     function withdrawUnlockedToken(address tokenAddress, address recipient) external;
 }

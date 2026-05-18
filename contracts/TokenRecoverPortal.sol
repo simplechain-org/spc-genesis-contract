@@ -93,8 +93,8 @@ contract TokenRecoverPortal is SystemV2, Initializable, ReentrancyGuardUpgradeab
     }
 
     /**
-     * For the Beacon Chain account whose funds are not transferred to BSC before BC fusion,
-     * can still invoke this function to recover funds on the BSC network.
+     * For the Beacon Chain account whose funds are not transferred to SPC before BC fusion,
+     * can still invoke this function to recover funds on the SPC network.
      * @dev The token will be locked in TokenHub after the signature and the merkel proof is verified.
      * @notice The token will be unlocked after 7 days.
      * @param tokenSymbol is the symbol of token.

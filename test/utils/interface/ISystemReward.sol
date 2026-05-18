@@ -42,7 +42,9 @@ interface SystemReward {
     function alreadyInit() external view returns (bool);
     function bscChainID() external view returns (uint16);
     function claimRewards(address payable to, uint256 amount) external returns (uint256);
-    function isOperator(address addr) external view returns (bool);
+    function isOperator(
+        address addr
+    ) external view returns (bool);
     function numOperator() external view returns (uint256);
     function updateParam(string memory key, bytes memory value) external;
 }

@@ -30,17 +30,25 @@ interface GovToken {
     function STAKING_CHANNELID() external view returns (uint8);
     function allowance(address owner, address spender) external view returns (uint256);
     function approve(address spender, uint256 amount) external returns (bool);
-    function balanceOf(address account) external view returns (uint256);
-    function burn(uint256) external pure;
+    function balanceOf(
+        address account
+    ) external view returns (uint256);
+    function burn(
+        uint256
+    ) external pure;
     function burnFrom(address, uint256) external pure;
     function checkpoints(address account, uint32 pos) external view returns (Checkpoint memory);
     function clock() external view returns (uint48);
     function decimals() external view returns (uint8);
     function decreaseAllowance(address spender, uint256 subtractedValue) external returns (bool);
-    function delegate(address delegatee) external;
+    function delegate(
+        address delegatee
+    ) external;
     function delegateBySig(address delegatee, uint256 nonce, uint256 expiry, uint8 v, bytes32 r, bytes32 s) external;
     function delegateVote(address delegator, address delegatee) external;
-    function delegates(address account) external view returns (address);
+    function delegates(
+        address account
+    ) external view returns (address);
     function eip712Domain()
         external
         view
@@ -53,15 +61,23 @@ interface GovToken {
             bytes32 salt,
             uint256[] memory extensions
         );
-    function getPastTotalSupply(uint256 timepoint) external view returns (uint256);
+    function getPastTotalSupply(
+        uint256 timepoint
+    ) external view returns (uint256);
     function getPastVotes(address account, uint256 timepoint) external view returns (uint256);
-    function getVotes(address account) external view returns (uint256);
+    function getVotes(
+        address account
+    ) external view returns (uint256);
     function increaseAllowance(address spender, uint256 addedValue) external returns (bool);
     function initialize() external;
     function mintedMap(address, address) external view returns (uint256);
     function name() external view returns (string memory);
-    function nonces(address owner) external view returns (uint256);
-    function numCheckpoints(address account) external view returns (uint32);
+    function nonces(
+        address owner
+    ) external view returns (uint256);
+    function numCheckpoints(
+        address account
+    ) external view returns (uint32);
     function permit(
         address owner,
         address spender,

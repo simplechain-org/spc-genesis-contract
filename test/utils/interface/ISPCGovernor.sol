@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.10;
 
-interface BSCGovernor {
+interface SPCGovernor {
     type ProposalState is uint8;
 
     struct Receipt {
@@ -66,9 +66,15 @@ interface BSCGovernor {
     function COUNTING_MODE() external pure returns (string memory);
     function EXTENDED_BALLOT_TYPEHASH() external view returns (bytes32);
     function STAKING_CHANNELID() external view returns (uint8);
-    function addToBlackList(address account) external;
-    function blackList(address) external view returns (bool);
-    function cancel(uint256 proposalId) external;
+    function addToBlackList(
+        address account
+    ) external;
+    function blackList(
+        address
+    ) external view returns (bool);
+    function cancel(
+        uint256 proposalId
+    ) external;
     function cancel(
         address[] memory targets,
         uint256[] memory values,
@@ -118,8 +124,12 @@ interface BSCGovernor {
         bytes[] memory calldatas,
         bytes32 descriptionHash
     ) external payable returns (uint256);
-    function execute(uint256 proposalId) external payable;
-    function getActions(uint256 proposalId)
+    function execute(
+        uint256 proposalId
+    ) external payable;
+    function getActions(
+        uint256 proposalId
+    )
         external
         view
         returns (
@@ -145,7 +155,9 @@ interface BSCGovernor {
     function initialize() external;
     function isPaused() external view returns (bool);
     function lateQuorumVoteExtension() external view returns (uint64);
-    function latestProposalIds(address) external view returns (uint256);
+    function latestProposalIds(
+        address
+    ) external view returns (uint256);
     function name() external view returns (string memory);
     function onERC1155BatchReceived(
         address,
@@ -157,12 +169,22 @@ interface BSCGovernor {
     function onERC1155Received(address, address, uint256, uint256, bytes memory) external returns (bytes4);
     function onERC721Received(address, address, uint256, bytes memory) external returns (bytes4);
     function pause() external;
-    function proposalDeadline(uint256 proposalId) external view returns (uint256);
-    function proposalEta(uint256 proposalId) external view returns (uint256);
-    function proposalProposer(uint256 proposalId) external view returns (address);
-    function proposalSnapshot(uint256 proposalId) external view returns (uint256);
+    function proposalDeadline(
+        uint256 proposalId
+    ) external view returns (uint256);
+    function proposalEta(
+        uint256 proposalId
+    ) external view returns (uint256);
+    function proposalProposer(
+        uint256 proposalId
+    ) external view returns (address);
+    function proposalSnapshot(
+        uint256 proposalId
+    ) external view returns (uint256);
     function proposalThreshold() external view returns (uint256);
-    function proposals(uint256 proposalId)
+    function proposals(
+        uint256 proposalId
+    )
         external
         view
         returns (
@@ -197,28 +219,54 @@ interface BSCGovernor {
         bytes[] memory calldatas,
         bytes32 descriptionHash
     ) external returns (uint256 proposalId);
-    function queue(uint256 proposalId) external;
-    function quorum(uint256 timepoint) external view returns (uint256);
+    function queue(
+        uint256 proposalId
+    ) external;
+    function quorum(
+        uint256 timepoint
+    ) external view returns (uint256);
     function quorumDenominator() external view returns (uint256);
-    function quorumNumerator(uint256 timepoint) external view returns (uint256);
+    function quorumNumerator(
+        uint256 timepoint
+    ) external view returns (uint256);
     function quorumNumerator() external view returns (uint256);
     function quorumVotes() external view returns (uint256);
     function relay(address target, uint256 value, bytes memory data) external payable;
-    function removeFromBlackList(address account) external;
+    function removeFromBlackList(
+        address account
+    ) external;
     function resume() external;
-    function setLateQuorumVoteExtension(uint64 newVoteExtension) external;
-    function setProposalThreshold(uint256 newProposalThreshold) external;
-    function setVotingDelay(uint256 newVotingDelay) external;
-    function setVotingPeriod(uint256 newVotingPeriod) external;
-    function state(uint256 proposalId) external view returns (ProposalState);
-    function supportsInterface(bytes4 interfaceId) external view returns (bool);
+    function setLateQuorumVoteExtension(
+        uint64 newVoteExtension
+    ) external;
+    function setProposalThreshold(
+        uint256 newProposalThreshold
+    ) external;
+    function setVotingDelay(
+        uint256 newVotingDelay
+    ) external;
+    function setVotingPeriod(
+        uint256 newVotingPeriod
+    ) external;
+    function state(
+        uint256 proposalId
+    ) external view returns (ProposalState);
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external view returns (bool);
     function timelock() external view returns (address);
     function token() external view returns (address);
     function updateParam(string memory key, bytes memory value) external;
-    function updateQuorumNumerator(uint256 newQuorumNumerator) external;
-    function updateTimelock(address newTimelock) external;
+    function updateQuorumNumerator(
+        uint256 newQuorumNumerator
+    ) external;
+    function updateTimelock(
+        address newTimelock
+    ) external;
     function version() external view returns (string memory);
     function votingDelay() external view returns (uint256);
     function votingPeriod() external view returns (uint256);
-    function whitelistTargets(address) external view returns (bool);
+    function whitelistTargets(
+        address
+    ) external view returns (bool);
 }

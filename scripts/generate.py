@@ -308,7 +308,7 @@ def mainnet():
 def testnet():
     global network, chain_id, hex_chain_id
     network = "testnet"
-    chain_id = 97
+    chain_id = 1913
     hex_chain_id = convert_chain_id(chain_id)
 
     # testnet init data
@@ -361,8 +361,8 @@ def testnet():
 
 @main.command(help="Generate contracts for dev environment")
 def dev(
-    dev_chain_id: int = 1913,
-    init_burn_ratio: Annotated[str, typer.Option(help="init burn ratio of BscValidatorSet")] = "500",
+    dev_chain_id: int = 1914,
+    init_burn_ratio: Annotated[str, typer.Option(help="init burn ratio of SPCValidatorSet")] = "500",
     source_chain_id: Annotated[
         str, typer.Option(help="source chain id of the token recover portal")] = "Binance-Chain-Ganges",
     stake_hub_protector: Annotated[str, typer.Option(help="assetProtector of StakeHub")] = "address(0xdEaD)",
@@ -371,7 +371,7 @@ def dev(
                                               typer.Option(help="protector of TokenRecoverPortal")] = "address(0xdEaD)",
     block_interval: Annotated[str, typer.Option(help="block interval of Parlia")] = "3 seconds",
     breathe_block_interval: Annotated[str, typer.Option(help="breath block interval of Parlia")] = "1 days",
-    max_elected_validators: Annotated[str, typer.Option(help="maxElectedValidators of StakeHub")] = "45",
+    max_elected_validators: Annotated[str, typer.Option(help="maxElectedValidators of StakeHub")] = "13",
     unbond_period: Annotated[str, typer.Option(help="unbondPeriod of StakeHub")] = "7 days",
     downtime_jail_time: Annotated[str, typer.Option(help="downtimeJailTime of StakeHub")] = "2 days",
     felony_jail_time: Annotated[str, typer.Option(help="felonyJailTime of StakeHub")] = "30 days",
@@ -382,10 +382,10 @@ def dev(
                                  typer.Option(help="INIT_VOTING_DELAY of SPCGovernor")] = "0 hours / BLOCK_INTERVAL",
     init_voting_period: Annotated[str,
                                   typer.Option(help="INIT_VOTING_PERIOD of SPCGovernor")] = "7 days / BLOCK_INTERVAL",
-    init_proposal_threshold: Annotated[str, typer.Option(help="INIT_PROPOSAL_THRESHOLD of SPCGovernor")] = "200 ether",
+    init_proposal_threshold: Annotated[str, typer.Option(help="INIT_PROPOSAL_THRESHOLD of SPCGovernor")] = "5000 ether",
     init_quorum_numerator: Annotated[str, typer.Option(help="INIT_QUORUM_NUMERATOR of SPCGovernor")] = "10",
     propose_start_threshold: Annotated[
-        str, typer.Option(help="PROPOSE_START_GOVBNB_SUPPLY_THRESHOLD of SPCGovernor")] = "10_000_000 ether",
+        str, typer.Option(help="PROPOSE_START_GOVSRW_SUPPLY_THRESHOLD of SPCGovernor")] = "10_000_000 ether",
     init_min_period_after_quorum: Annotated[
         str, typer.Option(help="INIT_MIN_PERIOD_AFTER_QUORUM of SPCGovernor")] = "uint64(1 days / BLOCK_INTERVAL)",
     init_minimal_delay: Annotated[str, typer.Option(help="INIT_MINIMAL_DELAY of SPCTimelock")] = "24 hours",
@@ -485,7 +485,7 @@ def generate_validators(
                 {
                     "consensusAddr": vs[0],
                     "feeAddr": vs[1],
-                    "bscFeeAddr": vs[2],
+                    "spcFeeAddr": vs[2],
                     "votingPower": vs[3],
                     "bLSPublicKey": vs[4],
                 }

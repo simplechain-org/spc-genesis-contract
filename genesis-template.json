@@ -81,7 +81,7 @@
       "code": "{{tendermintLightClient}}"
     },
     "0x0000000000000000000000000000000000001004": {
-      "balance": "{{initLockedBNBOnTokenHub}}",
+      "balance": "{{initLockedSRWOnTokenHub}}",
       "code": "{{tokenHub}}"
     },
     "0x0000000000000000000000000000000000001005": {

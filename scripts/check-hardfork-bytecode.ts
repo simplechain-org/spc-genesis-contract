@@ -59,16 +59,16 @@ const TOKEN_RECOVER_PORTAL_ADDR = '0x0000000000000000000000000000000000003000';
 contractNameMap[TOKEN_RECOVER_PORTAL_ADDR] = 'TokenRecoverPortalContract'
 
 let hardforkName = process.env.HARDFORK
-let bscUrl = process.env.BSC_URL
-let bscRepoDir = '/tmp/bsc'
+let repoUrl = process.env.REPO_URL
+let repoDir = '/tmp/bsc'
 
 const checkHardforkBytecode = async () => {
-  const bscHardforkBytecodeDir = bscRepoDir + '/core/systemcontracts/' + hardforkName
-  const mainnetDir = bscHardforkBytecodeDir + '/mainnet'
-  const testnetDir = bscHardforkBytecodeDir + '/chapel'
+  const hardforkBytecodeDir = repoDir + '/core/systemcontracts/' + hardforkName
+  const mainnetDir = hardforkBytecodeDir + '/mainnet'
+  const testnetDir = hardforkBytecodeDir + '/chapel'
 
   log('---------------------------------------------------------------------------')
-  log(`Mainnet: compare genesis bytecode with bsc repo`)
+  log(`Mainnet: compare genesis bytecode with upstream repo`)
   const mainnetHardforkFiles = await searchFiles(mainnetDir, 'Contract')
   if (mainnetHardforkFiles.length === 0) {
     throw new Error(`cannot find any files in ${mainnetDir}`)
@@ -77,7 +77,7 @@ const checkHardforkBytecode = async () => {
   await compareGenesisWithHardforkBytecodes(mainnetGenesis, mainnetHardforkFiles)
 
   log('---------------------------------------------------------------------------')
-  log(`Testnet: compare genesis bytecode with bsc repo`)
+  log(`Testnet: compare genesis bytecode with upstream repo`)
   const testnetHardforkFiles = await searchFiles(testnetDir, 'Contract')
   if (testnetHardforkFiles.length === 0) {
     throw new Error(`cannot find any files in ${testnetDir}`)
@@ -100,15 +100,15 @@ const compareGenesisWithHardforkBytecodes = async (genesisFile: string, files: s
     log(contractName, addr)
     log('bytecode from genesis:', bytecode.length, )
 
-    const bytecodeFromBsc = getBytecodeFromBscRepo(contractName, files)
-    if (!bytecodeFromBsc) {
-      log(`cannot find bytecode for ${contractName} in bsc repo`)
+    const bytecodeFromRepo = getBytecodeFromRepo(contractName, files)
+    if (!bytecodeFromRepo) {
+      log(`cannot find bytecode for ${contractName} in upstream repo`)
       continue;
     }
 
-    log('bytecode from bsc repo:', bytecodeFromBsc.length, )
+    log('bytecode from upstream repo:', bytecodeFromRepo.length, )
 
-    if (bytecode === bytecodeFromBsc) {
+    if (bytecode === bytecodeFromRepo) {
       log('Success!')
     } else {
       throw new Error(`bytecode not match for ${contractName}`)
@@ -116,7 +116,7 @@ const compareGenesisWithHardforkBytecodes = async (genesisFile: string, files: s
   }
 }
 
-const getBytecodeFromBscRepo = (contractName: string, files: string[]): string | undefined => {
+const getBytecodeFromRepo = (contractName: string, files: string[]): string | undefined => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
     if (file.includes(`/${contractName}`)) {
@@ -163,15 +163,15 @@ const main = async () => {
     throw new Error('HARDFORK is required in .env')
   }
 
-  if (!bscUrl) {
-    throw new Error('BSC_URL is required in .env')
+  if (!repoUrl) {
+    throw new Error('REPO_URL is required in .env')
   }
 
   hardforkName = hardforkName.trim()
-  bscUrl = bscUrl.trim()
+  repoUrl = repoUrl.trim()
 
-  const p= bscUrl.lastIndexOf('/')
-  const commitId = bscUrl.substring(p+1)
+  const p= repoUrl.lastIndexOf('/')
+  const commitId = repoUrl.substring(p+1)
 
   log('hardforkName', hardforkName, 'commitId', commitId)
 
